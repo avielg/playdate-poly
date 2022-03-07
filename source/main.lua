@@ -15,9 +15,6 @@ function gameSetup()
 	player:moveTo(200,80)
 	player:add()
 	
-	local backgroundImage = gfx.image.new("images/densechecker")
-	assert(backgroundImage)
-	
 	gfx.sprite.setBackgroundDrawingCallback(
 		function( x, y, width, height )
 			gfx.setClipRect(x, y, width, height)
