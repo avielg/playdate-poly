@@ -30,14 +30,7 @@ function gameSetup()
 			gfx.fillRect(0, 60, 400, 180)
 			
 			for key, _ in pairs(lines) do
-				local line = lines[key]
-				local outsideDrawRect = 
-					line.tx+line.width < x or line.fx-line.width > x+width 
-					or line.ty+line.width < y or line.fy-line.width > y+height
-				
-				if not outsideDrawRect then
-					line:draw()
-				end
+				lines[key]:draw()
 			end
 			
 			gfx.clearClipRect()
