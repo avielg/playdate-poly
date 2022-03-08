@@ -32,8 +32,8 @@ function gameSetup()
 			for key, _ in pairs(lines) do
 				local line = lines[key]
 				local outsideDrawRect = 
-					line.tx < x or line.fx > x+width 
-					or line.ty < y or line.fy > y+height
+					line.tx+line.width < x or line.fx-line.width > x+width 
+					or line.ty+line.width < y or line.fy-line.width > y+height
 				
 				if not outsideDrawRect then
 					line:draw()
