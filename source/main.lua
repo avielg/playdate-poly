@@ -9,24 +9,40 @@ local gfx <const> = playdate.graphics
 
 local player = nil
 
+local lines = {}
+
 function gameSetup()
 	local playerImg = gfx.image.new("images/player")
 	assert(playerImg)
 	
 	player = gfx.sprite.new(playerImg)
-	player:moveTo(200,80)
-	player:setZIndex(-32768)
+	player:setZIndex(100)
+	player:moveTo(200,30)
+	player:setRotation(90)
 	player:add()
 	
-	-- gfx.sprite.setBackgroundDrawingCallback(
-	-- 	function( x, y, width, height )
-	-- 		gfx.setClipRect(x, y, width, height)
-	-- 		gfx.setColor(playdate.graphics.kColorBlack)
-	-- 		gfx.setDitherPattern(0.8, gfx.image.kDitherTypeScreen)
-	-- 		gfx.fillRect(x,y,width, height)
-	-- 		gfx.clearClipRect()
-	-- 	end
-	-- )
+	gfx.sprite.setBackgroundDrawingCallback(
+		function( x, y, width, height )
+			gfx.setClipRect(x, y, width, height)
+			
+			gfx.setColor(gfx.kColorBlack)
+			gfx.setDitherPattern(0.8, gfx.image.kDitherTypeScreen)
+			gfx.fillRect(0, 60, 400, 180)
+			
+			for key, _ in pairs(lines) do
+				local line = lines[key]
+				local outsideDrawRect = 
+					line.tx < x or line.fx > x+width 
+					or line.ty < y or line.fy > y+height
+				
+				if not outsideDrawRect then
+					line:draw()
+				end
+			end
+			
+			gfx.clearClipRect()
+		end
+	)
 end
 
 gameSetup()
@@ -43,8 +59,6 @@ function playdate.cranked(change, acceleratedChange)
 		end
 	)
 end
-
-local lines = {}
 
 function playdate.update()
 	local dx = 0
@@ -66,14 +80,11 @@ function playdate.update()
 	
 	gfx.sprite.update()
 	
-	for _, line in ipairs(lines) do
-		line:draw()
-	end
-	
 	gfx.setColor(playdate.graphics.kColorWhite)
-	gfx.fillRect(2,2,140,46)
-	gfx.drawText("dx " .. dx, 5,5)
-	gfx.drawText("dy " .. dy, 5,25)
+	gfx.fillRect(0,0,140,60)
+	gfx.drawText("dx " .. dx, 2,2)
+	gfx.drawText("dy " .. dy, 2,22)
+	gfx.drawText("lines " .. #lines, 2, 42)
 	
 	playdate.timer.updateTimers()
 end
