@@ -5,7 +5,16 @@ import "CoreLibs/timer"
 
 import 'line'
 
+local fontFamily = {
+  [playdate.graphics.font.kVariantNormal] = "fonts/Nontendo-Light",
+  [playdate.graphics.font.kVariantBold] = "fonts/Nontendo-Bold"
+  -- [playdate.graphics.font.kVariantItalic] = "path/to/italicFont"
+}
+
 local gfx <const> = playdate.graphics
+
+local font = gfx.font.newFamily(fontFamily)
+gfx.setFontFamily(font)
 
 local player = nil
 local hud = nil
@@ -16,6 +25,8 @@ local slines = {} -- sprites of the lines
 
 local dx = 0
 local dy = 0
+local playerY = 0
+local playerX = 0
 
 function gameSetup()
 	local playerImg = gfx.image.new("images/player")
@@ -53,7 +64,8 @@ function gameSetup()
 	-- ground:add()
 	
 	hud = gfx.sprite.new()
-	hud:setSize(400, 20)
+	hud:setZIndex(999)
+	hud:setSize(400, 14)
 	hud:setCenter(0, 0)
 	hud:moveTo(0, 0)
 	hud:setIgnoresDrawOffset(true)	
@@ -62,9 +74,10 @@ function gameSetup()
 		gfx.setColor(gfx.kColorBlack)
 		gfx.fillRect(x, y, width, height)
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-		gfx.drawText("dx " .. dx, 2,2)
-		gfx.drawText("dy " .. dy, 142,2)
-		gfx.drawText("lines " .. #lines, 282, 2)
+		gfx.drawText("Lines " .. #lines, 0, 0)
+		gfx.drawText("Player " .. playerX .. ", " .. playerY, 80, 0)
+		gfx.drawText("dx " .. dx, 260,0)
+		gfx.drawText("dy " .. dy, 330,0)
 		gfx.clearClipRect()
 	end
 	hud:add()
@@ -132,6 +145,8 @@ function playdate.update()
 
 		local tx = player.x
 		local ty = player.y
+		playerY = ty
+		playerX = tx
 
 		-- Draw Lines & Background --
 		-----------------------------
@@ -150,10 +165,9 @@ function playdate.update()
 		-- Scroll Screen --
 		-------------------
 
-		local _, y = player:getPosition()
 		local offsetStart = 100
-		if y - offsetStart > 0 then
-			local offset = -(y - offsetStart)
+		if playerY - offsetStart > 0 then
+			local offset = -(playerY - offsetStart)
 			-- print(offset ,fx, fy, tx, ty)
 			
 			gfx.setDrawOffset(0,offset)
