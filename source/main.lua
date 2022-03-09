@@ -9,11 +9,10 @@ local gfx <const> = playdate.graphics
 
 local player = nil
 local hud = nil
-local ground = nil
-local linesSprites = nil
+-- local ground = nil
 
-local lines = {}
-local slines = {}
+local lines = {} -- Line objects
+local slines = {} -- sprites of the lines
 
 local dx = 0
 local dy = 0
@@ -110,15 +109,31 @@ end
 
 function playdate.update()
 	if moving == 1 then
+		
+		-- Move Player --
+		------------------
+		
 		local angle = player:getRotation()
 		dx = math.cos(math.rad(angle))
 		dy = math.sin(math.rad(angle))
 		
-		local fx = player.x
+		local fx = player.x -- from X
 		local fy = player.y
-		player:moveBy(dx*2,dy*2)
+		
+		local newX = dx*2
+		local newY = dy * 2
+		player:moveBy(0,newY) -- Can always move Y, but X not always...
+		
+		-- Avoid going past screen edges
+		if player.x + newX < 400 and player.x + newX >= 0 then
+			player:moveBy(newX,0)
+		end
+
 		local tx = player.x
 		local ty = player.y
+
+		-- Draw Lines & Background --
+		-----------------------------
 
 		local line = Line:new(fx, fy, tx, ty)
 		table.insert(lines, line)
@@ -131,20 +146,21 @@ function playdate.update()
 		-- ground:markDirty()
 		gfx.sprite.redrawBackground()
 		
+		-- Scroll Screen --
+		-------------------
+
 		local _, y = player:getPosition()
-		if y-150 > 0 then
-			local offset = -(y-150)
+		local offsetStart = 100
+		if y - offsetStart > 0 then
+			local offset = -(y - offsetStart)
 			-- print(offset ,fx, fy, tx, ty)
 			
 			gfx.setDrawOffset(0,offset)
 			-- gfx.sprite.addDirtyRect(0, -offset, 400, 240)
 		end
 	end
-	
-	
-	
+
 	gfx.sprite.update()
-	
 	playdate.timer.updateTimers()
 end
 
