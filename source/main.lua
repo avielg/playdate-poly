@@ -13,6 +13,7 @@ local ground = nil
 local linesSprites = nil
 
 local lines = {}
+local slines = {}
 
 local dx = 0
 local dy = 0
@@ -26,29 +27,31 @@ function gameSetup()
 	player:setRotation(90)
 	player:add()
 	
-	ground = gfx.sprite.new()
-	ground:setZIndex(-32768)
-	ground:setSize(400, 240)
-	ground:setCenter(0,0)
-	ground:moveTo(0, 0)
-	ground:setIgnoresDrawOffset(true)
-	ground.draw = function(s, x, y, width, height)
-		gfx.setColor(gfx.kColorBlack)
-		gfx.setDitherPattern(0.8, gfx.image.kDitherTypeScreen)
-		gfx.fillRect(0, 0, width, height)
-	end
-	ground:add()
-	
-	linesSprite = gfx.sprite.new()
-	linesSprite:setSize(400,240) -- sprite per line
-	linesSprite:setCenter(0,0)
-	linesSprite:moveTo(0,0)
-	linesSprite.draw = function(s, x, y, width, height)
-		for key, _ in pairs(lines) do
-			lines[key]:draw()
+	gfx.sprite.setBackgroundDrawingCallback(
+		function( x, y, width, height )
+			gfx.setClipRect( x, y, width, height )
+			gfx.setColor(gfx.kColorBlack)
+			gfx.setDitherPattern(0.8, gfx.image.kDitherTypeScreen)
+			gfx.fillRect(x, y, width, height)
+			gfx.clearClipRect()
 		end
-	end
-	linesSprite:add()
+	)
+
+	-- ground = gfx.sprite.new()
+	-- ground:setSize(playdate.display.getSize())
+	-- ground:setCenter(0,0)
+	-- ground:moveTo(0, 0)
+	-- ground:setZIndex(-32768)
+	-- ground:setIgnoresDrawOffset(true)
+	-- ground:setUpdatesEnabled(false)
+	-- ground.draw = function(s, x, y, width, height)
+	-- 	gfx.setClipRect( x, y, width, height )
+	-- 	gfx.setColor(gfx.kColorBlack)
+	-- 	gfx.setDitherPattern(0.8, gfx.image.kDitherTypeScreen)
+	-- 	gfx.fillRect(0, 0, width, height)
+	-- 	gfx.clearClipRect()
+	-- end
+	-- ground:add()
 	
 	hud = gfx.sprite.new()
 	hud:setSize(140, 60)
@@ -56,11 +59,13 @@ function gameSetup()
 	hud:moveTo(0, 0)
 	hud:setIgnoresDrawOffset(true)	
 	hud.draw = function(s, x, y, width, height)
-		gfx.setColor(playdate.graphics.kColorWhite)
+		gfx.setClipRect( x, y, width, height )
+		gfx.setColor(gfx.kColorWhite)
 		gfx.fillRect(x, y, width, height)
 		gfx.drawText("dx " .. dx, 2,2)
 		gfx.drawText("dy " .. dy, 2,22)
 		gfx.drawText("lines " .. #lines, 2, 42)
+		gfx.clearClipRect()
 	end
 	hud:add()
 end
@@ -80,6 +85,29 @@ function playdate.cranked(change, acceleratedChange)
 	)
 end
 
+function addLine(line)
+	local s = gfx.sprite.new()
+	s:setSize(
+		(line.tx-line.fx)+20,
+		(line.ty-line.fy)+20
+	)
+	s:moveTo(line.tx,line.ty)
+	-- s:setSize(100+line.ty,240)
+	-- s:moveTo(0,0)
+	-- s:setCenter(0,0)
+	s.draw = function(self ,x, y, width, height)
+		-- gfx.setClipRect( x, y, width, height )
+		gfx.setColor(gfx.kColorWhite)
+		gfx.setLineCapStyle(gfx.kLineCapStyleRound)
+		gfx.setLineWidth(20)
+		gfx.drawLine(0,0,width,height)
+		-- gfx.drawLine(line.fx, line.fy, line.tx, line.ty)
+		-- gfx.clearClipRect()
+	end
+	s:add()
+	table.insert(slines, s)
+end
+
 function playdate.update()
 	if moving == 1 then
 		local angle = player:getRotation()
@@ -88,22 +116,32 @@ function playdate.update()
 		
 		local fx = player.x
 		local fy = player.y
-		player:moveBy(dx*1.1,dy*1.1)
+		player:moveBy(dx*2,dy*2)
 		local tx = player.x
 		local ty = player.y
 
 		local line = Line:new(fx, fy, tx, ty)
 		table.insert(lines, line)
-		
+		addLine(line)
 		hud:markDirty()
-		linesSprite:markDirty()
+		
+		for _, s in pairs(slines) do
+			s:markDirty()
+		end
+		-- ground:markDirty()
+		gfx.sprite.redrawBackground()
+		
+		local _, y = player:getPosition()
+		if y-150 > 0 then
+			local offset = -(y-150)
+			-- print(offset ,fx, fy, tx, ty)
+			
+			gfx.setDrawOffset(0,offset)
+			-- gfx.sprite.addDirtyRect(0, -offset, 400, 240)
+		end
 	end
 	
-	-- local _, y = player:getPosition()
-	-- if y-150 > 0 then
-	-- 	local offset = -(y-150)
-	-- 	gfx.setDrawOffset(0,offset)
-	-- end
+	
 	
 	gfx.sprite.update()
 	
@@ -112,3 +150,11 @@ end
 
 function playdate.upButtonDown()	moving = 1	end
 function playdate.upButtonUp()		moving = 0	end
+function playdate.leftButtonDown()
+	local currentRotation = player:getRotation()
+	player:setRotation(currentRotation - 20)
+end
+function playdate.rightButtonDown()
+	local currentRotation = player:getRotation()
+	player:setRotation(currentRotation + 20)
+end
