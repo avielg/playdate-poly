@@ -4,6 +4,7 @@ import "CoreLibs/sprites"
 import "CoreLibs/timer"
 
 import 'line'
+import 'alert'
 
 local fontFamily = {
   [playdate.graphics.font.kVariantNormal] = "fonts/Nontendo-Light",
@@ -19,24 +20,92 @@ gfx.setFontFamily(font)
 local player = nil
 local hud = nil
 -- local ground = nil
+local scorpion = nil
+local scorpionLine = nil
 
 local lines = {} -- Line objects
 local slines = {} -- sprites of the lines
+
+local timer = nil
 
 local dx = 0
 local dy = 0
 local playerY = 0
 local playerX = 0
 
+local moving = 0
+
+local kStateGoing = 1
+local kStateLost = 2
+local state = kStateGoing
+
+local alert = nil
+
+function resetGame()
+	alert:clearAlert()
+	dx = 0
+	dy = 0
+	playerX = 0
+	playerY = 0
+	moving = 0
+	lines = {}
+	
+	for i = 1, #slines do
+		slines[i]:remove()
+	end
+	slines = {}
+	
+	player:moveTo(200,30)
+	player:setRotation(90)
+	scorpion:moveTo(200,0)
+	scorpion:setVisible(false)
+	
+	state = kStateGoing
+	timer:start()
+end
+
 function gameSetup()
+	alert = Alert()
+	alert:setZIndex(998)
+	alert:setIgnoresDrawOffset(true)
+	
 	local playerImg = gfx.image.new("images/player")
 	assert(playerImg)
 	
 	player = gfx.sprite.new(playerImg)
 	player:moveTo(200,30)
 	player:setRotation(90)
+	player:setCollideRect(0, 0, player:getSize())
 	player:add()
 	
+	local scorpionImg = gfx.image.new("images/scorpion")
+	assert(scorpionImg)
+	
+	scorpion = gfx.sprite.new(scorpionImg)
+	scorpion:moveTo(200,0)
+	scorpion:setCollideRect(0, 0, scorpion:getSize())
+	scorpion:add()
+	scorpion:setVisible(false)
+
+	local function timerCallback()
+		scorpion:setVisible(player.y > 100)
+		-- print("scorpion!")
+		if scorpion:isVisible() then
+			if scorpionLine then
+				scorpionLine += 1
+			else
+				scorpionLine = 1
+			end
+			local line = lines[scorpionLine]
+			local radians = math.atan2(line.tx-line.fx, line.ty-line.fy)
+			local degrees = 360 - math.deg(radians)
+			scorpion:moveTo(line.fx, line.fy)
+			scorpion:setRotation(degrees)
+		end
+	end
+	timer = playdate.timer.new(20, timerCallback)
+	timer.repeats = true
+
 	gfx.sprite.setBackgroundDrawingCallback(
 		function( x, y, width, height )
 			gfx.setClipRect( x, y, width, height )
@@ -85,17 +154,17 @@ end
 
 gameSetup()
 
-local moving = 0
-
 function playdate.cranked(change, acceleratedChange)
-	local currentRotation = player:getRotation()
-	player:setRotation(currentRotation + change)
-	moving = 1
-	playdate.timer.performAfterDelay(150, 
-		function()
-			moving = 0
-		end
-	)
+	if state == kStateGoing then
+		local currentRotation = player:getRotation()
+		player:setRotation(currentRotation + change)
+		moving = 1
+		playdate.timer.performAfterDelay(150, 
+			function()
+				moving = 0
+			end
+		)
+	end
 end
 
 function addLine(line)
@@ -122,7 +191,16 @@ function addLine(line)
 end
 
 function playdate.update()
-	if moving == 1 then
+	if state == kStateLost then
+		timer:pause()
+		
+		alert.alertMessage = "*You are dead!*\nThe scorpion ate you..."
+		alert.alertContinue = alert.kAlertContinueTryAgain
+		alert.alertClearCallback = function()
+			resetGame()
+		end
+		alert:markDirty()
+	elseif moving == 1 and state == kStateGoing then
 		
 		-- Move Player --
 		------------------
@@ -175,6 +253,20 @@ function playdate.update()
 		end
 	end
 
+	local collisions = gfx.sprite.allOverlappingSprites()
+	
+	for i = 1, #collisions do
+			local collisionPair = collisions[i]
+			local s1 = collisionPair[1]
+			local s2 = collisionPair[2]
+			if scorpion:isVisible() then
+				if (s1 == player and s2 == scorpion) or (s2 == player and s1 == scorpion) then
+					state = kStateLost
+				end
+			end
+			
+	end
+	
 	gfx.sprite.update()
 	playdate.timer.updateTimers()
 end
@@ -188,4 +280,7 @@ end
 function playdate.rightButtonDown()
 	local currentRotation = player:getRotation()
 	player:setRotation(currentRotation + 20)
+end
+function playdate.AButtonUp()
+	resetGame()
 end
