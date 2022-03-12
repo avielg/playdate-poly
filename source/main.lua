@@ -57,8 +57,11 @@ function resetGame()
 	
 	player:moveTo(200,30)
 	player:setRotation(90)
+	
 	scorpion:moveTo(200,0)
 	scorpion:setVisible(false)
+	
+	hud:markDirty()
 	
 	state = kStateGoing
 	timer:start()
