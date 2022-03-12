@@ -7,8 +7,8 @@ import 'line'
 import 'alert'
 
 local fontFamily = {
-  [playdate.graphics.font.kVariantNormal] = "fonts/Nontendo-Light",
-  [playdate.graphics.font.kVariantBold] = "fonts/Nontendo-Bold"
+  [playdate.graphics.font.kVariantNormal] = "fonts/Nontendo/Nontendo-Light",
+  [playdate.graphics.font.kVariantBold] = "fonts/Nontendo/Nontendo-Bold"
   -- [playdate.graphics.font.kVariantItalic] = "path/to/italicFont"
 }
 
@@ -274,12 +274,16 @@ end
 function playdate.upButtonDown()	moving = 1	end
 function playdate.upButtonUp()		moving = 0	end
 function playdate.leftButtonDown()
-	local currentRotation = player:getRotation()
-	player:setRotation(currentRotation - 20)
+	if state == kStateGoing then
+		local currentRotation = player:getRotation()
+		player:setRotation(currentRotation - 20)
+	end
 end
 function playdate.rightButtonDown()
-	local currentRotation = player:getRotation()
-	player:setRotation(currentRotation + 20)
+	if state == kStateGoing then
+		local currentRotation = player:getRotation()
+		player:setRotation(currentRotation + 20)
+	end
 end
 function playdate.AButtonUp()
 	resetGame()

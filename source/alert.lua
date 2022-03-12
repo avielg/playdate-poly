@@ -24,13 +24,8 @@ function Alert:set(message, continue, callback)
 	self:markDirty()
 end
 
-function Alert:draw(_,_,_,_)
-	print("draw")
-	
+function Alert:draw(_,_,_,_)	
 	if self.alertMessage then
-		print("ALERT", self.alertMessage)
-		-- gfx.drawText("Continue Ⓐ", 100, 100)
-		
 		local sw = screenW -- screen width
 		local sh = screenH -- screen height
 	
@@ -50,8 +45,15 @@ function Alert:draw(_,_,_,_)
 		gfx.drawRoundRect(x+m,y+m,w-m*2,h-m*2,r/2)
 		local p = 20 -- padding
 		
-		local prevFont = gfx.getFont()
-		gfx.setFontFamily(gfx.getSystemFont())
+		local fnt = gfx.font
+		local prevFontNormal = gfx.getFont()
+		local prevFontBold = gfx.getFont(fnt.kVariantBold)
+		local prevFontItalic = gfx.getFont(fnt.kVariantItalic)
+
+		gfx.setFont(gfx.getSystemFont())
+		gfx.setFont(gfx.getSystemFont(fnt.kVariantBold), fnt.kVariantBold)
+		gfx.setFont(gfx.getSystemFont(fnt.kVariantItalic), fnt.kVariantItalic)
+
 		local prevDrawMode = gfx.getImageDrawMode()
 		gfx.setImageDrawMode(gfx.kDrawModeFillBlack)
 		
@@ -64,14 +66,17 @@ function Alert:draw(_,_,_,_)
 		elseif self.alertContinue == self.kAlertContinueNext then
 			gfx.drawText("Next Ⓐ", x+172, y+h-p-8)
 		end
-		gfx.setFontFamily(prevFont)
+		
+		gfx.setFont(prevFontNormal)
+		gfx.setFont(prevFontBold, fnt.kVariantBold)
+		gfx.setFont(prevFontItalic, fnt.kVariantItalic)
 		gfx.setImageDrawMode(prevDrawMode)
 	end
 end
 
 function Alert:clearAlert()
-	print("clear")
 	self.alertMessage = nil
 	self.alertContinue = nil
 	self.alertClearCallback = nil
+	self:markDirty()
 end
