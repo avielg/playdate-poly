@@ -9,6 +9,7 @@ import 'alert'
 -- When the scorpion distance to player is this many lines - we lost
 local kLinesWhenScorpionHitPlayer = 25
 
+-- scorpion appears (and begins moving) only after player moved this many lines
 local kNumOfLinesWhenScorpionAppears = 60
 
 local fontFamily = {
@@ -40,8 +41,7 @@ local playerX = 0
 
 local moving = 0
 
-local kStateGoing = 1
-local kStateLost = 2
+local kStateGoing, kStateLost = 1, 2
 local state = kStateGoing
 
 local alert = nil
