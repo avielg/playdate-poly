@@ -132,6 +132,7 @@ function gameSetup()
 			
 			scorpion:moveTo(line.fx, line.fy)
 			scorpion:setRotation(degrees)
+			hud:markDirty()
 		end
 	end
 	timer = playdate.timer.new(20, timerCallback)
@@ -174,7 +175,11 @@ function gameSetup()
 		gfx.setColor(gfx.kColorBlack)
 		gfx.fillRect(x, y, width, height)
 		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-		gfx.drawText("Lines " .. #lines, 0, 0)
+		if scorpionLine then
+			gfx.drawText("Lines " .. #lines .. " | " .. #lines - scorpionLine, 0, 0)
+		else
+			gfx.drawText("Lines " .. #lines, 0, 0)
+		end
 		gfx.drawText("Player " .. playerX .. ", " .. playerY, 80, 0)
 		gfx.drawText("dx " .. dx, 260,0)
 		gfx.drawText("dy " .. dy, 330,0)
