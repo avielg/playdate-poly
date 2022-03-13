@@ -47,7 +47,7 @@ local state = kStateGoing
 local alert = nil
 
 function resetGame()
-	alert:clearAlert()
+	alert:dismiss()
 	dx = 0
 	dy = 0
 	playerX = 0
@@ -233,13 +233,12 @@ end
 function playdate.update()
 	if state == kStateLost then
 		timer:pause()
-		
-		alert.alertMessage = "*You are dead!*\nThe scorpion ate you..."
-		alert.alertContinue = alert.kAlertContinueTryAgain
-		alert.alertClearCallback = function()
-			resetGame()
-		end
-		alert:markDirty()
+
+		alert:show(
+			"*You are dead!*\nThe scorpion ate you...",
+			alert.kAlertContinueTryAgain,
+			resetGame
+		)
 	elseif moving == 1 and state == kStateGoing then
 		
 		-- Move Player --
@@ -320,5 +319,7 @@ function playdate.rightButtonDown()
 	end
 end
 function playdate.AButtonUp()
-	resetGame()
+	if alert:isShowing() then
+		resetGame()
+	end
 end

@@ -8,8 +8,7 @@ local screenW, screenH = playdate.display.getSize()
 function Alert:init()
 	Alert.super.init(self)
 	
-	self.alertMessage = nil
-	self.alertClearCallback = nil
+	self.message = nil
 	self.alertContinue = nil
 	self.kAlertContinueContinue = 1
 	self.kAlertContinueTryAgain = 2
@@ -23,12 +22,24 @@ function Alert:init()
 	self:add()
 end
 
-function Alert:set(message, continue, callback)
+function Alert:show(message, continue)
+	self.message = message
+	self.alertContinue = continue
+	self:markDirty()
+end
+
+function Alert:isShowing()
+	return self.message
+end
+
+function Alert:dismiss()
+	self.message = nil
+	self.alertContinue = nil
 	self:markDirty()
 end
 
 function Alert:draw(x,y,w,h)	
-	if self.alertMessage then		
+	if self.message then		
 		local r = 8 -- corner radius
 		gfx.setColor(gfx.kColorWhite)
 		gfx.fillRoundRect(x,y,w,h,r)
@@ -52,7 +63,7 @@ function Alert:draw(x,y,w,h)
 		gfx.setImageDrawMode(gfx.kDrawModeFillBlack)
 		
 		gfx.setColor(gfx.kColorBlack)
-		gfx.drawTextInRect(self.alertMessage, x+p, y+p, w-p*2, h-p*2)
+		gfx.drawTextInRect(self.message, x+p, y+p, w-p*2, h-p*2)
 		if self.alertContinue == self.kAlertContinueContinue then
 			gfx.drawText("Continue Ⓐ", x+142, y+h-p-8)
 		elseif self.alertContinue == self.kAlertContinueTryAgain then
@@ -66,11 +77,4 @@ function Alert:draw(x,y,w,h)
 		gfx.setFont(prevFontItalic, fnt.kVariantItalic)
 		gfx.setImageDrawMode(prevDrawMode)
 	end
-end
-
-function Alert:clearAlert()
-	self.alertMessage = nil
-	self.alertContinue = nil
-	self.alertClearCallback = nil
-	self:markDirty()
 end
