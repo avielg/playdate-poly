@@ -71,6 +71,8 @@ function resetGame()
 	timer:start()
 end
 
+local scorpionMovesWithoutTurns = 0
+
 function gameSetup()
 	alert = Alert()
 	alert:setZIndex(998)
@@ -94,7 +96,7 @@ function gameSetup()
 	scorpion:add()
 	scorpion:setVisible(false)
 
-	local function timerCallback()
+	local function timerCallback(t)
 		scorpion:setVisible(player.y > 100)
 		-- print("scorpion!")
 		if scorpion:isVisible() then
@@ -106,6 +108,28 @@ function gameSetup()
 			local line = lines[scorpionLine]
 			local radians = math.atan2(line.tx-line.fx, line.ty-line.fy)
 			local degrees = 360 - math.deg(radians)
+			
+			local scorpionDegrees  = scorpion:getRotation()
+			local degTo = degrees
+			local degFrom = scorpionDegrees
+			local a = degTo - degFrom
+			a = (a + 180) % 360 - 180
+			-- next timer update is # of degrees:
+			-- the larger the degrees slower the movement...
+			t.duration = math.max(4, a)
+			
+			-- also, no turn (0 degrees) skips lines
+			if a == 0 then
+				scorpionMovesWithoutTurns += 1
+				-- if scorpion moves straight 5 times in a row it skips a line!
+				if scorpionMovesWithoutTurns % 5 == 0 then
+					scorpionLine += 1
+					line = lines[scorpionLine]
+				end
+			else
+				scorpionMovesWithoutTurns = 1
+			end
+			
 			scorpion:moveTo(line.fx, line.fy)
 			scorpion:setRotation(degrees)
 		end

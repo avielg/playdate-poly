@@ -7,7 +7,7 @@ Much of the game's logic is based on the Izopod (Roly Poly) real life and behavi
 _(from M. Shachak (1980) Energy Allocation and Life History Strategy of the Desert lsopod)_
 
 ## ToDo
-- [ ] Scorpion is moving faster when the tunnel is straight, slower when it's full of turns (this is the basic logic of running away vs losing the game...)
+- [x] Scorpion is moving faster when the tunnel is straight, slower when it's full of turns (this is the basic logic of running away vs losing the game...)
 - [ ] Rocks interrupting the poly that it needs to go around
 - [ ] Food to collect points (besides how low we got...)
 - [ ] Poly can poop, it takes X seconds, but then delays the Scorpion by Y seconds when he reaches the poop
