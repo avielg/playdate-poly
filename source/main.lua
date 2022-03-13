@@ -69,6 +69,8 @@ function resetGame()
 	
 	hud:markDirty()
 	
+	gfx.setDrawOffset(0,0)
+	
 	state = kStateGoing
 	timer:start()
 end
@@ -288,6 +290,8 @@ function playdate.update()
 			
 			gfx.setDrawOffset(0,offset)
 			-- gfx.sprite.addDirtyRect(0, -offset, 400, 240)
+		else
+			gfx.setDrawOffset(0,0)
 		end
 	end
 
