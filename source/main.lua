@@ -6,6 +6,9 @@ import "CoreLibs/timer"
 import 'line'
 import 'alert'
 
+-- When the scorpion distance to player is this many lines - we lost
+local kLinesWhenScorpionHitPlayer = 25
+
 local fontFamily = {
   [playdate.graphics.font.kVariantNormal] = "fonts/Nontendo/Nontendo-Light",
   [playdate.graphics.font.kVariantBold] = "fonts/Nontendo/Nontendo-Bold"
@@ -21,8 +24,8 @@ local player = nil
 local hud = nil
 -- local ground = nil
 local scorpion = nil
-local scorpionLine = nil
 
+local scorpionLine = nil
 local lines = {} -- Line objects
 local slines = {} -- sprites of the lines
 
@@ -49,6 +52,7 @@ function resetGame()
 	playerY = 0
 	moving = 0
 	lines = {}
+	scorpionLine = nil
 	
 	for i = 1, #slines do
 		slines[i]:remove()
@@ -256,20 +260,12 @@ function playdate.update()
 		end
 	end
 
-	local collisions = gfx.sprite.allOverlappingSprites()
-	
-	for i = 1, #collisions do
-			local collisionPair = collisions[i]
-			local s1 = collisionPair[1]
-			local s2 = collisionPair[2]
-			if scorpion:isVisible() then
-				if (s1 == player and s2 == scorpion) or (s2 == player and s1 == scorpion) then
-					state = kStateLost
-				end
-			end
-			
+	if #lines > 0 and scorpionLine then
+		if scorpionLine > (#lines - kLinesWhenScorpionHitPlayer) then
+			state = kStateLost
+		end
 	end
-	
+
 	gfx.sprite.update()
 	playdate.timer.updateTimers()
 end
