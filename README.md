@@ -1,6 +1,6 @@
 # playdate-poly
 
-Much of the game's logic is based on the Izopod (Roly Poly) real life and behavior, as found in related research.
+Much of the game's logic is based on the Izopod (Roly Poly) real life and behavior! (with some creative freedom...)
 
 ![image](https://user-images.githubusercontent.com/5012557/158041460-9278ff9a-1175-4b21-9148-07e0b984e79c.png)
 
