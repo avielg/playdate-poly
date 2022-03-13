@@ -15,7 +15,6 @@ local kNumOfLinesWhenScorpionAppears = 60
 local fontFamily = {
   [playdate.graphics.font.kVariantNormal] = "fonts/Nontendo/Nontendo-Light",
   [playdate.graphics.font.kVariantBold] = "fonts/Nontendo/Nontendo-Bold"
-  -- [playdate.graphics.font.kVariantItalic] = "path/to/italicFont"
 }
 
 local gfx <const> = playdate.graphics
@@ -25,7 +24,6 @@ gfx.setFontFamily(font)
 
 local player = nil
 local hud = nil
--- local ground = nil
 local scorpion = nil
 
 local scorpionLine = nil
@@ -102,7 +100,6 @@ function gameSetup()
 
 	local function timerCallback(t)
 		scorpion:setVisible(#lines > kNumOfLinesWhenScorpionAppears)
-		-- print("scorpion!")
 		if scorpion:isVisible() then
 			if scorpionLine then
 				scorpionLine += 1
@@ -152,22 +149,6 @@ function gameSetup()
 		end
 	)
 
-	-- ground = gfx.sprite.new()
-	-- ground:setSize(playdate.display.getSize())
-	-- ground:setCenter(0,0)
-	-- ground:moveTo(0, 0)
-	-- ground:setZIndex(-32768)
-	-- ground:setIgnoresDrawOffset(true)
-	-- ground:setUpdatesEnabled(false)
-	-- ground.draw = function(s, x, y, width, height)
-	-- 	gfx.setClipRect( x, y, width, height )
-	-- 	gfx.setColor(gfx.kColorBlack)
-	-- 	gfx.setDitherPattern(0.8, gfx.image.kDitherTypeScreen)
-	-- 	gfx.fillRect(0, 0, width, height)
-	-- 	gfx.clearClipRect()
-	-- end
-	-- ground:add()
-	
 	hud = gfx.sprite.new()
 	hud:setZIndex(999)
 	hud:setSize(400, 14)
@@ -214,17 +195,11 @@ function addLine(line)
 		(line.ty-line.fy)+20
 	)
 	s:moveTo(line.tx,line.ty)
-	-- s:setSize(100+line.ty,240)
-	-- s:moveTo(0,0)
-	-- s:setCenter(0,0)
 	s.draw = function(self ,x, y, width, height)
-		-- gfx.setClipRect( x, y, width, height )
 		gfx.setColor(gfx.kColorWhite)
 		gfx.setLineCapStyle(gfx.kLineCapStyleRound)
 		gfx.setLineWidth(20)
 		gfx.drawLine(0,0,width,height)
-		-- gfx.drawLine(line.fx, line.fy, line.tx, line.ty)
-		-- gfx.clearClipRect()
 	end
 	s:add()
 	table.insert(slines, s)
@@ -276,7 +251,6 @@ function playdate.update()
 		for _, s in pairs(slines) do
 			s:markDirty()
 		end
-		-- ground:markDirty()
 		gfx.sprite.redrawBackground()
 		
 		-- Scroll Screen --
@@ -285,10 +259,7 @@ function playdate.update()
 		local offsetStart = 100
 		if playerY - offsetStart > 0 then
 			local offset = -(playerY - offsetStart)
-			-- print(offset ,fx, fy, tx, ty)
-			
 			gfx.setDrawOffset(0,offset)
-			-- gfx.sprite.addDirtyRect(0, -offset, 400, 240)
 		else
 			gfx.setDrawOffset(0,0)
 		end
