@@ -5,6 +5,7 @@ import "CoreLibs/timer"
 
 import 'line'
 import 'alert'
+import 'hud'
 
 -- When the scorpion distance to player is this many lines - we lost
 local kLinesWhenScorpionHitPlayer = 25
@@ -23,7 +24,7 @@ local font = gfx.font.newFamily(fontFamily)
 gfx.setFontFamily(font)
 
 local player = nil
-local hud = nil
+local hud = Hud()
 local scorpion = nil
 
 local scorpionLine = nil
@@ -31,12 +32,6 @@ local lines = {} -- Line objects
 local slines = {} -- sprites of the lines
 
 local timer = nil
-
-local dx = 0
-local dy = 0
-local playerY = 0
-local playerX = 0
-
 local moving = 0
 
 local kStateGoing, kStateLost = 1, 2
@@ -46,10 +41,7 @@ local alert = nil
 
 function resetGame()
 	alert:dismiss()
-	dx = 0
-	dy = 0
-	playerX = 0
-	playerY = 0
+	hud:reset()
 	moving = 0
 	lines = {}
 	scorpionLine = nil
@@ -76,10 +68,6 @@ end
 local scorpionMovesWithoutTurns = 0
 
 function gameSetup()
-	alert = Alert()
-	alert:setZIndex(998)
-	alert:setIgnoresDrawOffset(true)
-	
 	local playerImg = gfx.image.new("images/player")
 	assert(playerImg)
 	
@@ -133,11 +121,14 @@ function gameSetup()
 			
 			scorpion:moveTo(line.fx, line.fy)
 			scorpion:setRotation(degrees)
+			hud.scorpionLine = scorpionLine
 			hud:markDirty()
 		end
 	end
 	timer = playdate.timer.new(20, timerCallback)
 	timer.repeats = true
+
+	alert = Alert()
 
 	gfx.sprite.setBackgroundDrawingCallback(
 		function( x, y, width, height )
@@ -148,29 +139,6 @@ function gameSetup()
 			gfx.clearClipRect()
 		end
 	)
-
-	hud = gfx.sprite.new()
-	hud:setZIndex(999)
-	hud:setSize(400, 14)
-	hud:setCenter(0, 0)
-	hud:moveTo(0, 0)
-	hud:setIgnoresDrawOffset(true)	
-	hud.draw = function(s, x, y, width, height)
-		gfx.setClipRect( x, y, width, height )
-		gfx.setColor(gfx.kColorBlack)
-		gfx.fillRect(x, y, width, height)
-		playdate.graphics.setImageDrawMode(playdate.graphics.kDrawModeFillWhite)
-		if scorpionLine then
-			gfx.drawText("Lines " .. #lines .. " | " .. #lines - scorpionLine, 0, 0)
-		else
-			gfx.drawText("Lines " .. #lines, 0, 0)
-		end
-		gfx.drawText("Player " .. playerX .. ", " .. playerY, 80, 0)
-		gfx.drawText("dx " .. dx, 260,0)
-		gfx.drawText("dy " .. dy, 330,0)
-		gfx.clearClipRect()
-	end
-	hud:add()
 end
 
 gameSetup()
@@ -220,8 +188,8 @@ function playdate.update()
 		------------------
 		
 		local angle = player:getRotation()
-		dx = math.cos(math.rad(angle))
-		dy = math.sin(math.rad(angle))
+		local dx = math.cos(math.rad(angle))
+		local dy = math.sin(math.rad(angle))
 		
 		local fx = player.x -- from X
 		local fy = player.y
@@ -237,8 +205,6 @@ function playdate.update()
 
 		local tx = player.x
 		local ty = player.y
-		playerY = ty
-		playerX = tx
 
 		-- Draw Lines & Background --
 		-----------------------------
@@ -246,7 +212,6 @@ function playdate.update()
 		local line = Line:new(fx, fy, tx, ty)
 		table.insert(lines, line)
 		addLine(line)
-		hud:markDirty()
 		
 		for _, s in pairs(slines) do
 			s:markDirty()
@@ -257,12 +222,19 @@ function playdate.update()
 		-------------------
 
 		local offsetStart = 100
-		if playerY - offsetStart > 0 then
-			local offset = -(playerY - offsetStart)
+		if ty - offsetStart > 0 then
+			local offset = -(ty - offsetStart)
 			gfx.setDrawOffset(0,offset)
 		else
 			gfx.setDrawOffset(0,0)
 		end
+		
+		hud.playerY = ty
+		hud.playerX = tx
+		hud.dx = dx
+		hud.dy = dy
+		hud.numLines = #lines
+		hud:markDirty()
 	end
 
 	if #lines > 0 and scorpionLine then

@@ -19,6 +19,7 @@ function Alert:init()
 	self:setSize(w, h)
 	self:moveTo(screenW/2 - w/2, screenH/2 - h/2 + 20)
 	self:setCenter(0,0)
+	self:setIgnoresDrawOffset(true)
 	self:add()
 end
 
