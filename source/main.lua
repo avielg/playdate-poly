@@ -57,8 +57,6 @@ function resetGame()
 	scorpion:moveTo(200,0)
 	scorpion:setVisible(false)
 	
-	hud:markDirty()
-	
 	gfx.setDrawOffset(0,0)
 	
 	state = kStateGoing

@@ -40,4 +40,5 @@ function Hud:reset()
 	self.playerX = 0
 	self.numLines = 0
 	self.scorpionLine = nil
+	self:markDirty()
 end
