@@ -127,7 +127,7 @@ function gameSetup()
 					line = lines[scorpionLine]
 				end
 			else
-				scorpionMovesWithoutTurns = 1
+				scorpionMovesWithoutTurns = 0
 			end
 			
 			scorpion:moveTo(line.fx, line.fy)
