@@ -6,12 +6,7 @@ import "CoreLibs/timer"
 import 'line'
 import 'alert'
 import 'hud'
-
--- When the scorpion distance to player is this many lines - we lost
-local kLinesWhenScorpionHitPlayer = 25
-
--- scorpion appears (and begins moving) only after player moved this many lines
-local kNumOfLinesWhenScorpionAppears = 60
+import 'scorpion'
 
 local fontFamily = {
   [playdate.graphics.font.kVariantNormal] = "fonts/Nontendo/Nontendo-Light",
@@ -25,13 +20,10 @@ gfx.setFontFamily(font)
 
 local player = nil
 local hud = Hud()
-local scorpion = nil
+local scorpion = Scorpion()
 
-local scorpionLine = nil
-local lines = {} -- Line objects
 local slines = {} -- sprites of the lines
 
-local timer = nil
 local moving = 0
 
 local kStateGoing, kStateLost = 1, 2
@@ -44,29 +36,25 @@ function resetGame()
 	hud:reset()
 	moving = 0
 	lines = {}
-	scorpionLine = nil
 	
 	for i = 1, #slines do
 		slines[i]:remove()
 	end
 	slines = {}
 	
+	gfx.setDrawOffset(0,0)
+	
 	player:moveTo(200,30)
 	player:setRotation(90)
 	
-	scorpion:moveTo(200,0)
-	scorpion:setVisible(false)
-	
-	gfx.setDrawOffset(0,0)
-	
+	scorpion:reset()	
+	scorpion:setMoving(true)
+
 	state = kStateGoing
-	timer:start()
 end
 
-local scorpionMovesWithoutTurns = 0
-
 function gameSetup()
-	local playerImg = gfx.image.new("images/player")
+	local playerImg = gfx.image.new("images/player3")
 	assert(playerImg)
 	
 	player = gfx.sprite.new(playerImg)
@@ -75,57 +63,6 @@ function gameSetup()
 	player:setCollideRect(0, 0, player:getSize())
 	player:add()
 	
-	local scorpionImg = gfx.image.new("images/scorpion")
-	assert(scorpionImg)
-	
-	scorpion = gfx.sprite.new(scorpionImg)
-	scorpion:moveTo(200,0)
-	scorpion:setCollideRect(0, 0, scorpion:getSize())
-	scorpion:add()
-	scorpion:setVisible(false)
-
-	local function timerCallback(t)
-		scorpion:setVisible(#lines > kNumOfLinesWhenScorpionAppears)
-		if scorpion:isVisible() then
-			if scorpionLine then
-				scorpionLine += 1
-			else
-				scorpionLine = 1
-			end
-			local line = lines[scorpionLine]
-			local radians = math.atan2(line.tx-line.fx, line.ty-line.fy)
-			local degrees = 360 - math.deg(radians)
-			
-			local scorpionDegrees  = scorpion:getRotation()
-			local degTo = degrees
-			local degFrom = scorpionDegrees
-			local a = degTo - degFrom
-			a = (a + 180) % 360 - 180
-			-- next timer update is # of degrees:
-			-- the larger the degrees slower the movement...
-			t.duration = math.max(4, a * 2)
-			
-			-- also, no turn (0 degrees) skips lines
-			if a == 0 then
-				scorpionMovesWithoutTurns += 1
-				-- if scorpion moves straight 5 times in a row it skips a line!
-				if scorpionMovesWithoutTurns % 3 == 0 then
-					scorpionLine += 1
-					line = lines[scorpionLine]
-				end
-			else
-				scorpionMovesWithoutTurns = 0
-			end
-			
-			scorpion:moveTo(line.fx, line.fy)
-			scorpion:setRotation(degrees)
-			hud.scorpionLine = scorpionLine
-			hud:markDirty()
-		end
-	end
-	timer = playdate.timer.new(20, timerCallback)
-	timer.repeats = true
-
 	alert = Alert()
 
 	gfx.sprite.setBackgroundDrawingCallback(
@@ -173,8 +110,7 @@ end
 
 function playdate.update()
 	if state == kStateLost then
-		timer:pause()
-
+		scorpion:setMoving(false)
 		alert:show(
 			"*You are dead!*\nThe scorpion ate you...",
 			alert.kAlertContinueTryAgain,
@@ -232,13 +168,12 @@ function playdate.update()
 		hud.dx = dx
 		hud.dy = dy
 		hud.numLines = #lines
+		hud.scorpionLine = scorpion.scorpionLine
 		hud:markDirty()
 	end
 
-	if #lines > 0 and scorpionLine then
-		if scorpionLine > (#lines - kLinesWhenScorpionHitPlayer) then
-			state = kStateLost
-		end
+	if scorpion:checkCollisionWithNumLines(#lines) then
+		state = kStateLost
 	end
 
 	gfx.sprite.update()

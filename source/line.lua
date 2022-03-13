@@ -1,3 +1,4 @@
+lines = {} -- Line objects
 
 Line = {}
 Line.__index = Line
