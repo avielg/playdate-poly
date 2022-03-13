@@ -9,6 +9,8 @@ import 'alert'
 -- When the scorpion distance to player is this many lines - we lost
 local kLinesWhenScorpionHitPlayer = 25
 
+local kNumOfLinesWhenScorpionAppears = 60
+
 local fontFamily = {
   [playdate.graphics.font.kVariantNormal] = "fonts/Nontendo/Nontendo-Light",
   [playdate.graphics.font.kVariantBold] = "fonts/Nontendo/Nontendo-Bold"
@@ -97,7 +99,7 @@ function gameSetup()
 	scorpion:setVisible(false)
 
 	local function timerCallback(t)
-		scorpion:setVisible(player.y > 100)
+		scorpion:setVisible(#lines > kNumOfLinesWhenScorpionAppears)
 		-- print("scorpion!")
 		if scorpion:isVisible() then
 			if scorpionLine then
@@ -116,13 +118,13 @@ function gameSetup()
 			a = (a + 180) % 360 - 180
 			-- next timer update is # of degrees:
 			-- the larger the degrees slower the movement...
-			t.duration = math.max(4, a)
+			t.duration = math.max(4, a * 2)
 			
 			-- also, no turn (0 degrees) skips lines
 			if a == 0 then
 				scorpionMovesWithoutTurns += 1
 				-- if scorpion moves straight 5 times in a row it skips a line!
-				if scorpionMovesWithoutTurns % 5 == 0 then
+				if scorpionMovesWithoutTurns % 3 == 0 then
 					scorpionLine += 1
 					line = lines[scorpionLine]
 				end
