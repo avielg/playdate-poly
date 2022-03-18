@@ -184,7 +184,12 @@ function playdate.update()
 		hud.numLines = #lines
 		hud.scorpionLine = scorpion.scorpionLine
 		hud:markDirty()
-	end
+	else
+		if hud.scorpionLine ~= scorpion.scorpionLine then
+			hud.scorpionLine = scorpion.scorpionLine
+			hud:markDirty()
+		end
+	end	
 
 	if scorpion:checkCollisionWithNumLines(#lines) then
 		state = kStateLost
