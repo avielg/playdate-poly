@@ -11,6 +11,9 @@ import 'scorpion'
 -- The height of space above ground shown when starting the game
 local kAboveGroundSpace = 60
 
+-- The Y position at which the player appears walking "on ground"
+local kAboveGroundPlayerPositionY = 46
+
 local fontFamily = {
   [playdate.graphics.font.kVariantNormal] = "fonts/Nontendo/Nontendo-Light",
   [playdate.graphics.font.kVariantBold] = "fonts/Nontendo/Nontendo-Bold"
@@ -48,8 +51,7 @@ function resetGame()
 	
 	gfx.setDrawOffset(0,0)
 	
-	player:moveTo(200,30)
-	player:setRotation(90)
+	player:moveTo(200,kAboveGroundPlayerPositionY)
 	
 	scorpion:reset()	
 	scorpion:setMoving(true)
@@ -64,8 +66,7 @@ function gameSetup()
 	assert(playerImg)
 	
 	player = gfx.sprite.new(playerImg)
-	player:moveTo(200,30)
-	player:setRotation(90)
+	player:moveTo(200,kAboveGroundPlayerPositionY)
 	player:setCollideRect(0, 0, player:getSize())
 	player:add()
 	
@@ -137,7 +138,13 @@ function playdate.update()
 		
 		local newX = dx*2
 		local newY = dy * 2
-		player:moveBy(0,newY) -- Can always move Y, but X not always...
+		
+		-- Avoid going higher than "ground level"
+		if player.y + newY > kAboveGroundPlayerPositionY then
+			player:moveBy(0,newY)	
+		else
+			player:setRotation(0) -- don't rotate if not digging
+		end
 		
 		-- Avoid going past screen edges
 		if player.x + newX < 400 and player.x + newX >= 0 then
