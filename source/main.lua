@@ -8,6 +8,9 @@ import 'alert'
 import 'hud'
 import 'scorpion'
 
+-- The height of space above ground shown when starting the game
+local kAboveGroundSpace = 60
+
 local fontFamily = {
   [playdate.graphics.font.kVariantNormal] = "fonts/Nontendo/Nontendo-Light",
   [playdate.graphics.font.kVariantBold] = "fonts/Nontendo/Nontendo-Bold"
@@ -23,6 +26,7 @@ local hud = Hud()
 local scorpion = Scorpion()
 
 local slines = {} -- sprites of the lines
+local offsetY
 
 local moving = 0
 
@@ -50,6 +54,8 @@ function resetGame()
 	scorpion:reset()	
 	scorpion:setMoving(true)
 
+	gfx.sprite.redrawBackground()
+
 	state = kStateGoing
 end
 
@@ -70,7 +76,8 @@ function gameSetup()
 			gfx.setClipRect( x, y, width, height )
 			gfx.setColor(gfx.kColorBlack)
 			gfx.setDitherPattern(0.8, gfx.image.kDitherTypeScreen)
-			gfx.fillRect(x, y, width, height)
+			local offsetedSpace = kAboveGroundSpace + offsetY
+			gfx.fillRect(x, math.max(y, offsetedSpace), width, height)
 			gfx.clearClipRect()
 		end
 	)
@@ -175,6 +182,8 @@ function playdate.update()
 	if scorpion:checkCollisionWithNumLines(#lines) then
 		state = kStateLost
 	end
+
+	_, offsetY = gfx.getDrawOffset()
 
 	gfx.sprite.update()
 	playdate.timer.updateTimers()
