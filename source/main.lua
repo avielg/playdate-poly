@@ -49,6 +49,24 @@ local state = kStateGoing
 
 local alert = nil
 
+
+function addAboveGroundArt()
+	local bushImg = gfx.image.new("images/bush")
+	local bush = gfx.sprite.new(bushImg)
+	bush:moveTo(360,52)
+	bush:add()
+	
+	local treeImg = gfx.image.new("images/tree")
+	local tree = gfx.sprite.new(treeImg)
+	tree:moveTo(25,34)
+	tree:add()
+	
+	local signImg = gfx.image.new("images/sign")
+	local sign = gfx.sprite.new(signImg)
+	sign:moveTo(300,50)
+	sign:add()
+end
+
 local kAddStoneOffScreen, kAddStoneOnScreen = 1, 2
 function addStone(offScreen)
 	local minY = kAboveGroundSpace + math.abs(offsetY)
@@ -95,11 +113,13 @@ function resetGame()
 end
 
 function gameSetup()
+	addAboveGroundArt()
+
 	local playerImg = gfx.image.new("images/player3")
 	assert(playerImg)
 	
 	player = gfx.sprite.new(playerImg)
-	player:moveTo(200,kAboveGroundPlayerPositionY)
+	player:moveTo(200,kAboveGroundPlayerPositionY+3)
 	player:setCollideRect(0, 0, player:getSize())
 	player:add()
 	

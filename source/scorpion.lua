@@ -18,7 +18,6 @@ function Scorpion:init()
 	
 	self:reset()
 
-	-- self:setCollideRect(0, 0, self:getSize())
 	self:add()
 	
 	self.timer = playdate.timer.new(20, 
