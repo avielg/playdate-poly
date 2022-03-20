@@ -31,7 +31,7 @@ function Alert:show(message, continue)
 end
 
 function Alert:isShowing()
-	return self.message
+	return self.message ~= nil
 end
 
 function Alert:dismiss()

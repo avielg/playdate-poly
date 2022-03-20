@@ -14,7 +14,7 @@ function stoneSprite(fromX, fromY, toX, toY)
 	local x = math.random(fromX, toX)
 	local y = math.random(fromY, toY)
 	stone:moveTo(x,y)
-	-- stone:setCollideRect(0, 0, player:getSize())
+	stone:setCollideRect(0, 0, stone:getSize())
 	stone:add()
 	return stone
 end

@@ -56,12 +56,18 @@ function addStone(offScreen)
 	if offScreen == kAddStoneOffScreen then 
 		minY += screenH
 	end
-	print(offsetY, minY)
+
 	local s = stoneSprite(
 		0, minY, -- from X,Y
 		screenW, minY + screenH -- to X,Y
 	)
-	table.insert(s, stones)
+	table.insert(stones, s)
+end
+
+function resetStones()
+	for i = 1, #stones do stones[i]:remove() end
+	stones = {}
+	for i = 1, math.random(3,6) do addStone(kAddStoneOnScreen) end
 end
 
 function resetGame()
@@ -73,12 +79,12 @@ function resetGame()
 	for i = 1, #slines do slines[i]:remove() end
 	slines = {}
 	
-	for i = 1, #stones do stones[i]:remove() end
-	stones = {}
+	resetStones()
 
 	gfx.setDrawOffset(0,0)
 	
 	player:moveTo(200,kAboveGroundPlayerPositionY)
+	player:setRotation(0)
 	
 	scorpion:reset()	
 	scorpion:setMoving(true)
@@ -110,7 +116,7 @@ function gameSetup()
 		end
 	)
 	
-	for i = 1, math.random(3,6) do addStone(kAddStoneOnScreen) end
+	resetStones()
 end
 
 gameSetup()
@@ -179,40 +185,55 @@ function playdate.update()
 		if player.x + newX < 400 and player.x + newX >= 0 then
 			player:moveBy(newX,0)
 		end
-
+		
+				
+		local hitStone = false
+		local collisions = player:overlappingSprites()
+		for i = 1, #collisions do
+			local stone = collisions[i]
+			hitStone = hitStone or player:alphaCollision(stone)
+		end
+		if hitStone then
+			player:moveTo(fx, fy) -- undo move
+		end
+		
 		local tx = player.x
 		local ty = player.y
-
-		-- Draw Lines & Background --
-		-----------------------------
-
-		local line = Line:new(fx, fy, tx, ty)
-		table.insert(lines, line)
-		addLine(line)
 		
-		for _, s in pairs(slines) do
-			s:markDirty()
-		end
-		gfx.sprite.redrawBackground()
-		
-		-- Maybe Add Stones --
-		----------------------
-		
-		if math.random(1,10) % 10 == 0 then
-			addStone(kAddStoneOffScreen)
-		end
+		if tx ~= fx or ty ~= fy then
+			
+			-- Draw Lines & Background --
+			-----------------------------
+	
+			local line = Line:new(fx, fy, tx, ty)
+			table.insert(lines, line)
+			addLine(line)
+			
+			for _, s in pairs(slines) do
+				s:markDirty()
+			end
+			gfx.sprite.redrawBackground()
+			
+			-- Maybe Add Stones --
+			----------------------
+			
+			if math.random(1,10) % 10 == 0 then
+				addStone(kAddStoneOffScreen)
+			end
+	
+			-- Scroll Screen --
+			-------------------
+	
+			local offsetStart = 100
+			if ty - offsetStart > 0 then
+				local offset = -(ty - offsetStart)
+				gfx.setDrawOffset(0,offset)
+			else
+				gfx.setDrawOffset(0,0)
+			end
+			
+		end -- tx ~= fx or ty ~= fy
 
-		-- Scroll Screen --
-		-------------------
-
-		local offsetStart = 100
-		if ty - offsetStart > 0 then
-			local offset = -(ty - offsetStart)
-			gfx.setDrawOffset(0,offset)
-		else
-			gfx.setDrawOffset(0,0)
-		end
-		
 		hud.playerY = ty
 		hud.playerX = tx
 		hud.dx = dx
