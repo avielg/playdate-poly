@@ -7,6 +7,7 @@ import 'line'
 import 'alert'
 import 'hud'
 import 'scorpion'
+-- import 'rock'
 
 -- The height of space above ground shown when starting the game
 local kAboveGroundSpace = 60
