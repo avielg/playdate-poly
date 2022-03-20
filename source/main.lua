@@ -8,6 +8,7 @@ import 'alert'
 import 'hud'
 import 'scorpion'
 -- import 'rock'
+import 'stone'
 
 -- The height of space above ground shown when starting the game
 local kAboveGroundSpace = 60
@@ -25,12 +26,21 @@ local gfx <const> = playdate.graphics
 local font = gfx.font.newFamily(fontFamily)
 gfx.setFontFamily(font)
 
+-- Sprites --
+-------------
+
 local player = nil
 local hud = Hud()
 local scorpion = Scorpion()
+local stones = {}
+
+-- State --
+-----------
+
+local screenW, screenH = playdate.display.getSize()
 
 local slines = {} -- sprites of the lines
-local offsetY
+local offsetY = 0
 
 local moving = 0
 
@@ -39,17 +49,33 @@ local state = kStateGoing
 
 local alert = nil
 
+local kAddStoneOffScreen, kAddStoneOnScreen = 1, 2
+function addStone(offScreen)
+	local minY = kAboveGroundSpace + math.abs(offsetY)
+	
+	if offScreen == kAddStoneOffScreen then 
+		minY += screenH
+	end
+	print(offsetY, minY)
+	local s = stoneSprite(
+		0, minY, -- from X,Y
+		screenW, minY + screenH -- to X,Y
+	)
+	table.insert(s, stones)
+end
+
 function resetGame()
 	alert:dismiss()
 	hud:reset()
 	moving = 0
 	lines = {}
 	
-	for i = 1, #slines do
-		slines[i]:remove()
-	end
+	for i = 1, #slines do slines[i]:remove() end
 	slines = {}
 	
+	for i = 1, #stones do stones[i]:remove() end
+	stones = {}
+
 	gfx.setDrawOffset(0,0)
 	
 	player:moveTo(200,kAboveGroundPlayerPositionY)
@@ -83,6 +109,8 @@ function gameSetup()
 			gfx.clearClipRect()
 		end
 	)
+	
+	for i = 1, math.random(3,6) do addStone(kAddStoneOnScreen) end
 end
 
 gameSetup()
@@ -167,6 +195,13 @@ function playdate.update()
 		end
 		gfx.sprite.redrawBackground()
 		
+		-- Maybe Add Stones --
+		----------------------
+		
+		if math.random(1,10) % 10 == 0 then
+			addStone(kAddStoneOffScreen)
+		end
+
 		-- Scroll Screen --
 		-------------------
 
