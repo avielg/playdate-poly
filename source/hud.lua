@@ -1,3 +1,4 @@
+import 'constants'
 
 local gfx <const> = playdate.graphics
 
@@ -44,9 +45,8 @@ function Hud:draw(x, y, width, height)
 		end
 		
 		if self.scorpionLine then
-			local kLinesWhenScorpionHitPlayer = 15
 			local distance = self.numLines - self.scorpionLine - kLinesWhenScorpionHitPlayer
-			distance = math.min(60, distance)
+			distance = math.min(kAboveGroundSpace, distance)
 			local careful = distance < 16
 			local text = ""
 			for i = 1, distance do

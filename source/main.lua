@@ -3,6 +3,7 @@ import "CoreLibs/graphics"
 import "CoreLibs/sprites"
 import "CoreLibs/timer"
 
+import 'constants'
 import 'line'
 import 'alert'
 import 'hud'
@@ -10,11 +11,6 @@ import 'scorpion'
 -- import 'rock'
 import 'stone'
 
--- The height of space above ground shown when starting the game
-local kAboveGroundSpace = 60
-
--- The Y position at which the player appears walking "on ground"
-local kAboveGroundPlayerPositionY = 46
 
 local fontFamily = {
   [playdate.graphics.font.kVariantNormal] = "fonts/Nontendo/Nontendo-Light",

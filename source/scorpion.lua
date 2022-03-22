@@ -1,9 +1,5 @@
--- scorpion appears (and begins moving) only after player moved this many lines
-local kNumOfLinesWhenScorpionAppears = 60
 
--- When the scorpion distance to player is this many lines - we lost
-local kLinesWhenScorpionHitPlayer = 15
-
+import 'constants'
 import 'line'
 
 local gfx <const> = playdate.graphics
