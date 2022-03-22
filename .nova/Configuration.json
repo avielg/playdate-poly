@@ -1,6 +1,6 @@
 {
   "editor.default_syntax" : "lua",
-  "workspace.art_style" : 1,
-  "workspace.color" : 9,
+  "workspace.art_style" : 0,
+  "workspace.color" : 14,
   "workspace.name" : "Poly"
 }
