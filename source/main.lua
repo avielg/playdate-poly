@@ -69,7 +69,8 @@ end
 
 local kAddStoneOffScreen, kAddStoneOnScreen = 1, 2
 function addStone(offScreen)
-	local minY = kAboveGroundSpace + math.abs(offsetY)
+	local extraOffsetFromGround = 30
+	local minY = kAboveGroundSpace + extraOffsetFromGround + math.abs(offsetY)
 	
 	if offScreen == kAddStoneOffScreen then 
 		minY += screenH
