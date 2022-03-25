@@ -29,6 +29,7 @@ local player = nil
 local hud = Hud()
 local scorpion = Scorpion()
 local stones = {}
+local foods = {}
 
 -- State --
 -----------
@@ -79,10 +80,35 @@ function addStone(offScreen)
 	table.insert(stones, s)
 end
 
+local kTagFood = 1
+function addFood()
+	local minY = kAboveGroundSpace + math.abs(offsetY) + screenH -- always offscreen
+	
+	local s = gfx.sprite.new()
+	local padding = 4
+	local x = math.random(padding, screenW - padding)
+	local y = math.random(minY, minY + screenH)
+	s:moveTo(x,y)
+	s:setSize(6,6)
+	s:setCollideRect(0, 0, s:getSize())
+	s:setTag(kTagFood)
+	s.draw = function (self, x, y, width, height)
+		gfx.setColor(gfx.kColorBlack)
+		gfx.fillCircleInRect(0,0,width,height)
+	end
+	s:add()
+	table.insert(foods, s)
+end
+
 function resetStones()
 	for i = 1, #stones do stones[i]:remove() end
 	stones = {}
 	for i = 1, math.random(3,6) do addStone(kAddStoneOnScreen) end
+end
+
+function resetFoods()
+	for i = 1, #foods do foods[i]:remove() end
+	foods = {}
 end
 
 function resetGame()
@@ -95,6 +121,7 @@ function resetGame()
 	slines = {}
 	
 	resetStones()
+	resetFoods()
 
 	gfx.setDrawOffset(0,0)
 	
@@ -231,16 +258,20 @@ function playdate.update()
 			end
 			gfx.sprite.redrawBackground()
 			
-			-- Maybe Add Stones --
-			----------------------
+			-- Maybe Add Stones & Food --
+			-----------------------------
 			
 			if math.random(1,10) % 10 == 0 then
 				addStone(kAddStoneOffScreen)
 			end
-	
+			
+			if math.random(1,20) % 20 == 0 then
+				addFood()
+			end
+			
 			-- Scroll Screen --
 			-------------------
-	
+			
 			local offsetStart = 100
 			if ty - offsetStart > 0 then
 				local offset = -(ty - offsetStart)
