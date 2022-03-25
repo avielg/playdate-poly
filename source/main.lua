@@ -41,7 +41,7 @@ local offsetY = 0
 
 local moving = 0
 
-local kStateGoing, kStateLost = 1, 2
+local kStateGoing, kStateEating, kStateLost = 1, 2
 local state = kStateGoing
 
 local alert = nil
@@ -238,6 +238,15 @@ function playdate.update()
 			if s:getTag() == kTagFood then
 				s:remove()
 				hud.numFoods += 1
+				
+				state = kStateEating
+				playdate.timer.performAfterDelay(400, 
+					function()
+						if state == kStateEating then
+							state = kStateGoing
+						end
+					end
+				)
 			else
 				hitStone = hitStone or player:alphaCollision(s)
 			end
