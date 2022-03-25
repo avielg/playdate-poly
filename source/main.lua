@@ -240,6 +240,7 @@ function playdate.update()
 			local s = collisions[i]
 			local tag = s:getTag()
 			if tag == kTagFood then
+				-- hit food --
 				s:remove()
 				hud.numFoods += 1
 				
@@ -252,14 +253,15 @@ function playdate.update()
 					end
 				)
 			elseif tag == kTagSign then
-				cantMove = true -- hit sign
+				-- hit sign --
+				cantMove = true
 				alert:show(
 					"*Danger!* This area of the desert is full of scorpions!",
 					alert.kAlertContinueContinue,
 					resetGame
 				)
 			else
-				-- hit stone
+				-- hit stone --
 				cantMove = cantMove or player:alphaCollision(s)
 			end
 		end
