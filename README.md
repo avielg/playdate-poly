@@ -9,10 +9,10 @@ _(from M. Shachak (1980) Energy Allocation and Life History Strategy of the Dese
 ## ToDo
 - [x] Scorpion is moving faster when the tunnel is straight, slower when it's full of turns (this is the basic logic of running away vs losing the game...)
 - [x] Rocks interrupting the poly that it needs to go around
-- [ ] Food to collect points (besides how low we got...)
+- [x] Food to collect points (besides how low we got...)
 - [ ] A short while after eating, Poly needs to poop: It starts shaking, crank stops working, player must press B/A fast, repeatedly, to push the poop, then poop comes out and Poly stops shaking and can keep digging (meanwhile the scorpion is getting closer!!!)
 
 ### Current State
-Poly can dig, the screen scrolls up/down to folloy poly.
+Poly can dig, the screen scrolls up/down to follow poly.
 A scorpion chases poly, following its path, if they touch - game over.
 <img width="350" alt="image" src="https://user-images.githubusercontent.com/5012557/157371528-31746c8f-d822-443a-8388-68667d2bca59.png">
