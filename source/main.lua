@@ -234,8 +234,13 @@ function playdate.update()
 		local hitStone = false
 		local collisions = player:overlappingSprites()
 		for i = 1, #collisions do
-			local stone = collisions[i]
-			hitStone = hitStone or player:alphaCollision(stone)
+			local s = collisions[i]
+			if s:getTag() == kTagFood then
+				s:remove()
+				hud.numFoods += 1
+			else
+				hitStone = hitStone or player:alphaCollision(s)
+			end
 		end
 		if hitStone then
 			player:moveTo(fx, fy) -- undo move

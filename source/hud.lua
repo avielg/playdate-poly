@@ -39,7 +39,8 @@ function Hud:draw(x, y, width, height)
 		local digging = adjustedY > 0
 		if digging then
 			local cm = adjustedY / 100 -- each pixel is a millimeter...
-			gfx.drawText("Depth: " .. math.floor(cm) .. "cm", 2, dy)
+			gfx.drawText("Depth: *" .. math.floor(cm) .. " cm*", 2, dy)
+			gfx.drawText("Food: *" .. self.numFoods .. " noms*", 80, dy)
 		else
 			gfx.drawText("Start digging!", 2, dy)
 		end
@@ -72,6 +73,7 @@ function Hud:reset()
 	self.playerY = 0
 	self.playerX = 0
 	self.numLines = 0
+	self.numFoods = 0
 	self.scorpionLine = nil
 	self:markDirty()
 end
