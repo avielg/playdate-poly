@@ -46,6 +46,8 @@ local state = kStateGoing
 
 local alert = nil
 
+-- Sprite Tags
+local kTagSign, kTagFood = 1, 2
 
 function addAboveGroundArt()
 	local bushImg = gfx.image.new("images/bush")
@@ -60,6 +62,8 @@ function addAboveGroundArt()
 	
 	local signImg = gfx.image.new("images/sign")
 	local sign = gfx.sprite.new(signImg)
+	sign:setCollideRect(0, 0, sign:getSize())
+	sign:setTag(kTagSign)
 	sign:moveTo(300,50)
 	sign:add()
 end
@@ -80,7 +84,6 @@ function addStone(offScreen)
 	table.insert(stones, s)
 end
 
-local kTagFood = 1
 function addFood()
 	local minY = kAboveGroundSpace + math.abs(offsetY) + screenH -- always offscreen
 	
@@ -231,11 +234,12 @@ function playdate.update()
 		end
 		
 				
-		local hitStone = false
+		local cantMove = false
 		local collisions = player:overlappingSprites()
 		for i = 1, #collisions do
 			local s = collisions[i]
-			if s:getTag() == kTagFood then
+			local tag = s:getTag()
+			if tag == kTagFood then
 				s:remove()
 				hud.numFoods += 1
 				
@@ -247,11 +251,19 @@ function playdate.update()
 						end
 					end
 				)
+			elseif tag == kTagSign then
+				cantMove = true -- hit sign
+				alert:show(
+					"*Danger!* This area of the desert is full of scorpions!",
+					alert.kAlertContinueContinue,
+					resetGame
+				)
 			else
-				hitStone = hitStone or player:alphaCollision(s)
+				-- hit stone
+				cantMove = cantMove or player:alphaCollision(s)
 			end
 		end
-		if hitStone then
+		if cantMove then
 			player:moveTo(fx, fy) -- undo move
 		end
 		
