@@ -295,7 +295,7 @@ function playdate.update()
 			-- Maybe Add Stones & Food --
 			-----------------------------
 			
-			if math.random(1,10) % 10 == 0 then
+			if math.random(1,20) % 20 == 0 then
 				addStone(kAddStoneOffScreen)
 			end
 			
