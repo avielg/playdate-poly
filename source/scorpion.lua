@@ -7,7 +7,7 @@ local gfx <const> = playdate.graphics
 class('Scorpion').extends(gfx.sprite)
 
 function Scorpion:init()
-	local scorpionImg = gfx.image.new("images/scorpion2")
+	local scorpionImg = gfx.image.new("images/scorpion3")
 	assert(scorpionImg)
 	
 	Scorpion.super.init(self, scorpionImg)

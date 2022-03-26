@@ -142,11 +142,11 @@ end
 function gameSetup()
 	addAboveGroundArt()
 
-	local playerImg = gfx.image.new("images/player3")
+	local playerImg = gfx.image.new("images/player5")
 	assert(playerImg)
 	
 	player = gfx.sprite.new(playerImg)
-	player:moveTo(200,kAboveGroundPlayerPositionY+3)
+	player:moveTo(200,kAboveGroundPlayerPositionY+5)
 	player:setCollideRect(0, 0, player:getSize())
 	player:add()
 	
