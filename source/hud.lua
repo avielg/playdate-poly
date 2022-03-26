@@ -25,8 +25,27 @@ function Hud:bellyText()
 	elseif self.belly == 2 then return "OO"
 	elseif self.belly == 3 then return "OOO"
 	elseif self.belly == 4 then return "OOOO"
-	elseif self.belly == 5 then return "NEED TO POOP"
+	elseif self.belly == 5 then return "NEED TO POOP!"
 	end
+end
+
+local offsetBellyText = 0
+local shakeTimer = nil
+function Hud:shakeBellyText()
+	if shakeTimer ~= nil then return end
+
+	local t = playdate.timer.new(40, 0, 10)
+	t.reverses = true
+	t.repeats = true
+	t.reverseEasingFunction = playdate.easingFunctions.outQuad
+	t.updateCallback = function(timer)
+		offsetBellyText = timer.value
+	end
+	t.timerEndedCallback = function(timer)
+		shakeTimer = nil
+		timer:remove()		
+	end
+	t = shakeTimer
 end
 
 function Hud:draw(x, y, width, height)
@@ -53,7 +72,14 @@ function Hud:draw(x, y, width, height)
 			gfx.drawText("Depth: *" .. math.floor(cm) .. " cm*", 2, dy)
 			
 			local bt = self:bellyText()
-			gfx.drawText("Food: *" .. self.numFoods .. " noms*    " .. bt, 80, dy)
+			local spaces = ""
+			for i = 1, offsetBellyText do
+				if i % 3 == 0 then
+					local tick = " "
+					spaces = spaces .. tick
+				end
+			end
+			gfx.drawText("Food: *" .. self.numFoods .. " noms*  " .. spaces .. bt, 80, dy)
 		else
 			gfx.drawText("Start digging!", 2, dy)
 		end

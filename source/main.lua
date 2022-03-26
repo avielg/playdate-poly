@@ -239,20 +239,25 @@ function playdate.update()
 		for i = 1, #collisions do
 			local s = collisions[i]
 			local tag = s:getTag()
-			if tag == kTagFood and hud.belly < kMaxFoodInBelly then
+			if tag == kTagFood then
 				-- hit food --
 				s:remove()
-				hud.numFoods += 1
-				hud.belly += 1
 				
-				state = kStateEating
-				playdate.timer.performAfterDelay(400, 
-					function()
-						if state == kStateEating then
-							state = kStateGoing
+				if hud.belly < kMaxFoodInBelly then
+					hud.numFoods += 1
+					hud.belly += 1
+					
+					state = kStateEating
+					playdate.timer.performAfterDelay(400, 
+						function()
+							if state == kStateEating then
+								state = kStateGoing
+							end
 						end
-					end
-				)
+					)
+				else
+					hud:shakeBellyText()
+				end
 			elseif tag == kTagSign then
 				-- hit sign --
 				cantMove = true
