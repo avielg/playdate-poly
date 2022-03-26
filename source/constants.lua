@@ -15,3 +15,9 @@ kNumOfLinesWhenScorpionAppears = 60
 
 -- When the scorpion distance to player is this many lines - we lost
 kLinesWhenScorpionHitPlayer = 15
+
+--- Food ---
+------------
+
+-- max food pieces poly can eat before needing to poop
+kMaxFoodInBelly = 5

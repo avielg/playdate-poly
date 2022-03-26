@@ -14,8 +14,19 @@ function Hud:init()
 	self:setIgnoresDrawOffset(true)	
 	self:add()
 	
+	self:bellyText()
 	self:reset()
 	return self
+end
+
+function Hud:bellyText()
+	if self.belly == 0 then return ""
+	elseif self.belly == 1 then return "O"
+	elseif self.belly == 2 then return "OO"
+	elseif self.belly == 3 then return "OOO"
+	elseif self.belly == 4 then return "OOOO"
+	elseif self.belly == 5 then return "NEED TO POOP"
+	end
 end
 
 function Hud:draw(x, y, width, height)
@@ -40,7 +51,9 @@ function Hud:draw(x, y, width, height)
 		if digging then
 			local cm = adjustedY / 100 -- each pixel is a millimeter...
 			gfx.drawText("Depth: *" .. math.floor(cm) .. " cm*", 2, dy)
-			gfx.drawText("Food: *" .. self.numFoods .. " noms*", 80, dy)
+			
+			local bt = self:bellyText()
+			gfx.drawText("Food: *" .. self.numFoods .. " noms*    " .. bt, 80, dy)
 		else
 			gfx.drawText("Start digging!", 2, dy)
 		end
@@ -74,6 +87,7 @@ function Hud:reset()
 	self.playerX = 0
 	self.numLines = 0
 	self.numFoods = 0
+	self.belly = 0
 	self.scorpionLine = nil
 	self:markDirty()
 end
