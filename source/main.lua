@@ -178,7 +178,7 @@ function gameSetup()
 	assert(playerImg)
 	
 	player = gfx.sprite.new(playerImg)
-	player:moveTo(200,kAboveGroundPlayerPositionY+5)
+	player:moveTo(200,kAboveGroundPlayerPositionY)
 	player:setCollideRect(0, 0, player:getSize())
 	player:add()
 	

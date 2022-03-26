@@ -5,7 +5,7 @@
 kAboveGroundSpace = 60
 
 -- The Y position at which the player appears walking "on ground"
-kAboveGroundPlayerPositionY = 46
+kAboveGroundPlayerPositionY = 51
 
 --- Scorpion ---
 ----------------
