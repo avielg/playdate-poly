@@ -6,14 +6,15 @@ local gfx <const> = playdate.graphics
 
 class('Scorpion').extends(gfx.sprite)
 
-function Scorpion:init()
+function Scorpion:init(tag)
 	local scorpionImg = gfx.image.new("images/scorpion3")
 	assert(scorpionImg)
 	
 	Scorpion.super.init(self, scorpionImg)
 	
+	self:setTag(tag)
 	self:reset()
-
+	self:updateCollision()
 	self:add()
 	
 	self.timer = playdate.timer.new(20, 
@@ -24,6 +25,15 @@ function Scorpion:init()
 	self.timer.repeats = true
 	
 	return self
+end
+
+function Scorpion:updateCollision()
+	local d = self:getRotation() % 180
+	if d > 45 and d < 135 then
+		self:setCollideRect(20, 7, 30, 16)
+	else
+		self:setCollideRect(7, 20, 16, 30)
+	end
 end
 
 function Scorpion:checkCollisionWithNumLines(numLines)
@@ -77,6 +87,7 @@ function Scorpion:timerCallback(t)
 		
 		self:moveTo(line.fx, line.fy)
 		self:setRotation(degrees)
+		self:updateCollision()
 	end
 end
 

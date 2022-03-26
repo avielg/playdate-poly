@@ -8,7 +8,6 @@ import 'line'
 import 'alert'
 import 'hud'
 import 'scorpion'
--- import 'rock'
 import 'stone'
 
 
@@ -25,9 +24,12 @@ gfx.setFontFamily(font)
 -- Sprites --
 -------------
 
+-- Sprite Tags
+local kTagSign, kTagFood, kTagScorpion = 1, 2, 3
+
 local player = nil
 local hud = Hud()
-local scorpion = Scorpion()
+local scorpion = Scorpion(kTagScorpion)
 local stones = {}
 local foods = {}
 local poops = {}
@@ -46,9 +48,6 @@ local kStateGoing, kStateEating, kStatePoopin, kStateLost = 1, 2, 3, 4
 local state = kStateGoing
 
 local alert = nil
-
--- Sprite Tags
-local kTagSign, kTagFood = 1, 2
 
 function addAboveGroundArt()
 	local bushImg = gfx.image.new("images/bush")
@@ -305,6 +304,12 @@ function playdate.update()
 					alert.kAlertContinueContinue,
 					resetGame
 				)
+			elseif tag == kTagScorpion then
+				-- hit scorpion (maybe) --
+				if player:alphaCollision(s) then
+					cantMove = true
+					state = kStateLost
+				end
 			else
 				-- hit stone --
 				cantMove = cantMove or player:alphaCollision(s)

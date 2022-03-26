@@ -11,7 +11,7 @@ kAboveGroundPlayerPositionY = 46
 ----------------
 
 -- disable the scorpion, for debugging non-scorpion related stuff without dread...
-kScorpionEnabled = false
+kScorpionEnabled = true
 
 -- scorpion appears (and begins moving) only after player moved this many lines
 kNumOfLinesWhenScorpionAppears = 60
