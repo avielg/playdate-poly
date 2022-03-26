@@ -20,11 +20,11 @@ function Hud:init()
 end
 
 function Hud:bellyText()
-	if self.belly == 0 then return ""
-	elseif self.belly == 1 then return "O"
-	elseif self.belly == 2 then return "OO"
-	elseif self.belly == 3 then return "OOO"
-	elseif self.belly == 4 then return "OOOO"
+	if self.belly == 0 then return "-----"
+	elseif self.belly == 1 then return "O----"
+	elseif self.belly == 2 then return "OO---"
+	elseif self.belly == 3 then return "OOO--"
+	elseif self.belly == 4 then return "OOOO-"
 	elseif self.belly == 5 then return "NEED TO POOP!"
 	end
 end
@@ -79,7 +79,8 @@ function Hud:draw(x, y, width, height)
 					spaces = spaces .. tick
 				end
 			end
-			gfx.drawText("Food: *" .. self.numFoods .. " noms*  " .. spaces .. bt, 80, dy)
+			gfx.drawText("Food: *" .. self.numFoods .. " noms*", 80, dy)
+			gfx.drawText(spaces .. bt, 180, dy)
 		else
 			gfx.drawText("Start digging!", 2, dy)
 		end
