@@ -30,6 +30,7 @@ local hud = Hud()
 local scorpion = Scorpion()
 local stones = {}
 local foods = {}
+local poops = {}
 
 -- State --
 -----------
@@ -103,6 +104,32 @@ function addFood()
 	table.insert(foods, s)
 end
 
+function addPoop()
+	local length = 10
+	local s = gfx.sprite.new()
+	local lo = 6 -- lines offset
+	local line = lines[#lines - lo]
+	local x = line.fx - length
+	local y = line.fy - length
+	s:moveTo(x, y)
+	s:setSize(length,length) -- we rotate so we need a square to draw in...
+	s:setCenter(0,0)
+	s:setRotation(player:getRotation())
+	s:setZIndex(9999)
+	s.draw = function(self, x, y, width, height)
+		gfx.setColor(gfx.kColorBlack)
+		local w = self.width
+		local r = playdate.geometry.rect.new(0, w/2, w, 3) -- 3 will be thickness
+		local t = playdate.geometry.affineTransform.new()
+		t:rotate(self:getRotation(), w/2, w/2)
+		local p = r:toPolygon()
+		local np = p * t
+		gfx.fillPolygon(np)
+	end
+	s:add()
+	table.insert(poops, s)
+end
+
 function resetStones()
 	for i = 1, #stones do stones[i]:remove() end
 	stones = {}
@@ -112,6 +139,11 @@ end
 function resetFoods()
 	for i = 1, #foods do foods[i]:remove() end
 	foods = {}
+end
+
+function resetPoops()
+	for i = 1, #poops do poops[i]:remove() end
+	poops = {}
 end
 
 function resetGame()
@@ -125,6 +157,7 @@ function resetGame()
 	
 	resetStones()
 	resetFoods()
+	resetPoops()
 
 	gfx.setDrawOffset(0,0)
 	
@@ -372,6 +405,7 @@ function playdate.AButtonUp()
 			end
 			if hud.leftToPoop == 0 then
 				hud.belly = 0
+				addPoop()
 				state = kStateGoing
 			end
 			hud:markDirty()
