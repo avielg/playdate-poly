@@ -336,8 +336,10 @@ function playdate.update()
 		end
 	end	
 
-	if scorpion:checkCollisionWithNumLines(#lines) then
-		state = kStateLost
+	if kScorpionEnabled then
+		if scorpion:checkCollisionWithNumLines(#lines) then
+			state = kStateLost
+		end
 	end
 
 	_, offsetY = gfx.getDrawOffset()
