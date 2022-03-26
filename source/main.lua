@@ -41,7 +41,7 @@ local offsetY = 0
 
 local moving = 0
 
-local kStateGoing, kStateEating, kStateLost = 1, 2
+local kStateGoing, kStateEating, kStatePoopin, kStateLost = 1, 2, 3, 4
 local state = kStateGoing
 
 local alert = nil
@@ -198,6 +198,10 @@ function addLine(line)
 	table.insert(slines, s)
 end
 
+function isBellyFull()
+	return hud.belly >= kMaxFoodInBelly
+end
+
 function playdate.update()
 	if state == kStateLost then
 		scorpion:setMoving(false)
@@ -206,6 +210,8 @@ function playdate.update()
 			alert.kAlertContinueTryAgain,
 			resetGame
 		)
+	elseif state == kStatePoopin then
+		
 	elseif moving == 1 and state == kStateGoing then
 		
 		-- Move Player --
@@ -243,7 +249,7 @@ function playdate.update()
 				-- hit food --
 				s:remove()
 				
-				if hud.belly < kMaxFoodInBelly then
+				if not isBellyFull() then
 					hud.numFoods += 1
 					hud.belly += 1
 					
@@ -357,5 +363,21 @@ end
 function playdate.AButtonUp()
 	if alert:isShowing() then
 		resetGame()
+	elseif isBellyFull() then
+		if state == kStatePoopin then
+			if hud.leftToPoop > 0 then
+				hud.leftToPoop -= 1
+			end
+			if hud.leftToPoop == 0 then
+				hud.belly = 0
+				state = kStateGoing
+			end
+			hud:markDirty()
+		else
+			state = kStatePoopin
+			hud.leftToPoop = 10
+			hud:shakeBellyText()
+			hud:markDirty()
+		end
 	end
 end

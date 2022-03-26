@@ -13,19 +13,24 @@ function Hud:init()
 	self:moveTo(0, 0)
 	self:setIgnoresDrawOffset(true)	
 	self:add()
-	
-	self:bellyText()
+
 	self:reset()
 	return self
 end
 
+function repeatString(str, times)
+	local result = ""
+	for i = 1, times do
+		result = result .. str
+	end
+	return result
+end
+
 function Hud:bellyText()
-	if self.belly == 0 then return "-----"
-	elseif self.belly == 1 then return "O----"
-	elseif self.belly == 2 then return "OO---"
-	elseif self.belly == 3 then return "OOO--"
-	elseif self.belly == 4 then return "OOOO-"
-	elseif self.belly == 5 then return "NEED TO POOP!"
+	if self.belly == kMaxFoodInBelly then 
+		return "NEED TO POOP!"
+	else
+		return repeatString("O", self.belly) .. repeatString("-", kMaxFoodInBelly)
 	end
 end
 
@@ -110,10 +115,15 @@ function Hud:draw(x, y, width, height)
 	if self.debugMode then
 		self:drawDebugMode()
 	else
-		self:drawDepthAndFood()
-		if self.scorpionLine then
-			self:drawScorpionDistance()
-		end
+		if self.leftToPoop > 0 then
+			local left = repeatString("  *:*", self.leftToPoop)
+			gfx.drawText("*Keep Pressing!*" .. left, 100, dy)
+		else
+			self:drawDepthAndFood()
+			if self.scorpionLine then
+				self:drawScorpionDistance()
+			end
+		end	
 	end
 	gfx.clearClipRect()
 end
@@ -127,6 +137,7 @@ function Hud:reset()
 	self.numLines = 0
 	self.numFoods = 0
 	self.belly = 0
+	self.leftToPoop = 0
 	self.scorpionLine = nil
 	self:markDirty()
 end
