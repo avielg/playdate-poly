@@ -12,6 +12,7 @@ function Scorpion:init(tag)
 	
 	Scorpion.super.init(self, scorpionImg)
 	
+	self:setZIndex(zIndexScorpion)
 	self:setTag(tag)
 	self:reset()
 	self:updateCollision()

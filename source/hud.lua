@@ -7,7 +7,7 @@ class('Hud').extends(gfx.sprite)
 function Hud:init()
 	Hud.super.init(self)
 	
-	self:setZIndex(999)
+	self:setZIndex(zIndexHUD)
 	self:setSize(400, 16)
 	self:setCenter(0, 0)
 	self:moveTo(0, 0)

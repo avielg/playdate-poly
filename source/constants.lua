@@ -24,3 +24,13 @@ kLinesWhenScorpionHitPlayer = 15
 
 -- max food pieces poly can eat before needing to poop
 kMaxFoodInBelly = 5
+
+--- Layers ---
+--------------
+
+zIndexLine = 1
+zIndexPlayer = 2
+zIndexScorpion = 2
+zIndexPoop = 3
+zIndexHUD = 999
+zIndexAlert = 32767  -- alert goes over everything...

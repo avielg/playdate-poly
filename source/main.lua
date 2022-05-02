@@ -114,7 +114,7 @@ function addPoop()
 	s:setSize(length,length) -- we rotate so we need a square to draw in...
 	s:setCenter(0,0)
 	s:setRotation(player:getRotation())
-	s:setZIndex(9999)
+	s:setZIndex(zIndexPoop)
 	s.draw = function(self, x, y, width, height)
 		gfx.setColor(gfx.kColorBlack)
 		local w = self.width
@@ -178,6 +178,7 @@ function gameSetup()
 	assert(playerImg)
 	
 	player = gfx.sprite.new(playerImg)
+	player:setZIndex(zIndexPlayer)
 	player:moveTo(200,kAboveGroundPlayerPositionY)
 	player:setCollideRect(0, 0, player:getSize())
 	player:add()
@@ -215,6 +216,7 @@ end
 
 function addLine(line)
 	local s = gfx.sprite.new()
+	s:setZIndex(zIndexLine)
 	s:setSize(
 		(line.tx-line.fx)+20,
 		(line.ty-line.fy)+20
