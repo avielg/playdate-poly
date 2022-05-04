@@ -204,7 +204,7 @@ gameSetup()
 function playdate.cranked(change, acceleratedChange)
 	if state == kStateGoing then
 		local currentRotation = player:getRotation()
-		player:setRotation(currentRotation + change)
+		player:setRotation(currentRotation + change/3)
 		moving = 1
 		playdate.timer.performAfterDelay(150, 
 			function()
@@ -258,8 +258,8 @@ function playdate.update()
 		local fx = player.x -- from X
 		local fy = player.y
 		
-		local newX = dx*2
-		local newY = dy * 2
+		local newX = dx * 5
+		local newY = dy * 5
 		
 		-- Avoid going higher than "ground level"
 		if player.y + newY > kAboveGroundPlayerPositionY then
