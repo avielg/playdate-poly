@@ -44,7 +44,7 @@ local offsetY = 0
 
 local moving = 0
 
-local kStateGoing, kStateEating, kStatePoopin, kStateLost = 1, 2, 3, 4
+local kStateGoing, kStateEating, kStatePoopin, kStateLost, kStateSign = 1, 2, 3, 4, 5
 local state = kStateGoing
 
 local alert = nil
@@ -301,6 +301,7 @@ function playdate.update()
 			elseif tag == kTagSign then
 				-- hit sign --
 				cantMove = true
+				state = kStateSign
 				alert:show(
 					"*Danger!* This area of the desert is full of scorpions!",
 					alert.kAlertContinueContinue,
