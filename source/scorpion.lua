@@ -38,7 +38,10 @@ function Scorpion:updateCollision()
 end
 
 function Scorpion:checkCollisionWithNumLines(numLines)
-	self:setVisible(numLines > kNumOfLinesWhenScorpionAppears)
+	local visible = numLines > kNumOfLinesWhenScorpionAppears
+	if self:isVisible() ~= visible then
+		self:setVisible(visible)
+	end
 	if numLines > 0 and self.scorpionLine then
 		if self.scorpionLine > (numLines - kLinesWhenScorpionHitPlayer) then
 			return true
