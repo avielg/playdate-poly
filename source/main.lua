@@ -387,6 +387,9 @@ function playdate.update()
 
 	gfx.sprite.update()
 	playdate.timer.updateTimers()
+	if hud.debugMode then
+		playdate.drawFPS(0, 227)
+	end
 end
 
 function playdate.upButtonDown()	moving = 1	end
