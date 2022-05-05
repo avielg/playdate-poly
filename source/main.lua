@@ -33,13 +33,13 @@ local scorpion = Scorpion(kTagScorpion)
 local stones = {}
 local foods = {}
 local poops = {}
+local linesSprite = nil
 
 -- State --
 -----------
 
 local screenW, screenH = playdate.display.getSize()
 
-local slines = {} -- sprites of the lines
 local offsetY = 0
 
 local moving = 0
@@ -151,9 +151,6 @@ function resetGame()
 	moving = 0
 	lines = {}
 	
-	for i = 1, #slines do slines[i]:remove() end
-	slines = {}
-	
 	resetStones()
 	resetFoods()
 	resetPoops()
@@ -171,6 +168,26 @@ function resetGame()
 	state = kStateGoing
 end
 
+function lineSprite()
+	local s = gfx.sprite.new()
+	s:setZIndex(zIndexLine)
+	s:setSize(screenW, screenH)
+	s:moveTo(0,0)
+	s:setCenter(0,0)
+	s.draw = function(self ,x, y, width, height)
+		gfx.setColor(gfx.kColorWhite)
+		gfx.setLineCapStyle(gfx.kLineCapStyleRound)
+		gfx.setLineWidth(20)
+		
+		for i=1, #lines do
+			local l = lines[i]
+			gfx.drawLine(l.fx,l.fy,l.tx,l.ty)
+		end
+	end
+	s:add()
+	return s
+end
+
 function gameSetup()
 	addAboveGroundArt()
 
@@ -184,6 +201,8 @@ function gameSetup()
 	player:add()
 	
 	alert = Alert()
+
+	linesSprite = lineSprite()
 
 	gfx.sprite.setBackgroundDrawingCallback(
 		function( x, y, width, height )
@@ -215,21 +234,11 @@ function playdate.cranked(change, acceleratedChange)
 end
 
 function addLine(line)
-	local s = gfx.sprite.new()
-	s:setZIndex(zIndexLine)
-	s:setSize(
-		(line.tx-line.fx)+20,
-		(line.ty-line.fy)+20
-	)
-	s:moveTo(line.tx,line.ty)
-	s.draw = function(self ,x, y, width, height)
-		gfx.setColor(gfx.kColorWhite)
-		gfx.setLineCapStyle(gfx.kLineCapStyleRound)
-		gfx.setLineWidth(20)
-		gfx.drawLine(0,0,width,height)
+	local y = linesSprite.height
+	local lineEnd = math.max(line.fy, line.ty)
+	if lineEnd > y then
+		linesSprite:setSize(screenW, lineEnd + 20) -- 20 being line width
 	end
-	s:add()
-	table.insert(slines, s)
 end
 
 function isBellyFull()
@@ -328,7 +337,7 @@ function playdate.update()
 		if tx ~= fx or ty ~= fy then
 			
 			-- Add Line --
-			-----------------------------
+			--------------
 	
 			local line = Line:new(fx, fy, tx, ty)
 			table.insert(lines, line)
