@@ -327,17 +327,12 @@ function playdate.update()
 		
 		if tx ~= fx or ty ~= fy then
 			
-			-- Draw Lines & Background --
+			-- Add Line --
 			-----------------------------
 	
 			local line = Line:new(fx, fy, tx, ty)
 			table.insert(lines, line)
 			addLine(line)
-			
-			for _, s in pairs(slines) do
-				s:markDirty()
-			end
-			gfx.sprite.redrawBackground()
 			
 			-- Maybe Add Stones & Food --
 			-----------------------------
