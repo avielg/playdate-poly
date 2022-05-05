@@ -254,7 +254,8 @@ function playdate.update()
 			resetGame
 		)
 	elseif state == kStatePoopin then
-		
+	elseif state == kStateSign then
+		scorpion:setMoving(false)
 	elseif moving == 1 and state == kStateGoing then
 		
 		-- Move Player --
