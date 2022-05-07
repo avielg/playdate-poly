@@ -176,7 +176,6 @@ function lineSprite()
 	s:setCenter(0,0)
 	s.draw = function(self ,x, y, width, height)
 		gfx.setColor(gfx.kColorWhite)
-		gfx.setLineCapStyle(gfx.kLineCapStyleRound)
 		gfx.setLineWidth(20)
 		
 		for i=1, #lines do
