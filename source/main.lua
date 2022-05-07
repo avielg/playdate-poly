@@ -182,7 +182,7 @@ function lineSprite()
 		local limit = o - 100 -- without the extra 100 it stops drawing too low
 		for i = #lines, 1, -1 do
 			local l = lines[i]
-			if l.fy < limit and l.ty < limit then
+			if not kAllowDiggingUpAboveOffset and (l.fy < limit and l.ty < limit) then
 				-- stop iterating once we hit lines higher than offset
 				-- not doing this (iterating all the lines) tanks perf
 				break
@@ -281,8 +281,12 @@ function playdate.update()
 		local newY = dy * 5
 		
 		-- Avoid going higher than "ground level"
+		local topEdge = -offsetY + hud.height
+		local offsetUnblocked = kAllowDiggingUpAboveOffset or player.y + newY > topEdge
 		if player.y + newY > kAboveGroundPlayerPositionY then
-			player:moveBy(0,newY)	
+			if offsetUnblocked then -- don't move Y, but don't set rotation 0
+				player:moveBy(0,newY)
+			end
 		else
 			player:setRotation(0) -- don't rotate if not digging
 		end
@@ -370,7 +374,9 @@ function playdate.update()
 			local offsetStart = 100
 			if ty - offsetStart > 0 then
 				local offset = -(ty - offsetStart)
-				gfx.setDrawOffset(0,offset)
+				if kAllowDiggingUpAboveOffset or offset < offsetY then
+					gfx.setDrawOffset(0,offset)
+				end
 			else
 				gfx.setDrawOffset(0,0)
 			end

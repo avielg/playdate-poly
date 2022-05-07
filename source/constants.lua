@@ -10,6 +10,10 @@ kAboveGroundPlayerPositionY = 51
 -- The X position the player begins
 kPlayerStartX = 100
 
+-- If true, player can dig up enough to scroll screen up
+-- this means iterating all of the lines, which tanks perf after ~1-2k lines
+kAllowDiggingUpAboveOffset = false
+
 --- Scorpion ---
 ----------------
 
