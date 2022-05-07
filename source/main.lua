@@ -187,13 +187,9 @@ function lineSprite()
 				-- not doing this (iterating all the lines) tanks perf
 				break
 			else
-				-- local startInRect = l.fy > o and l.fy < o + height
-				-- local endsInRect = l.ty > o and l.ty < o + height
-				-- if startInRect or endsInRect then
-					local fy = l.fy - o
-					local ty = l.ty - o
-					gfx.drawLine(l.fx,fy,l.tx,ty)
-				-- end
+				local fy = l.fy - o
+				local ty = l.ty - o
+				gfx.drawLine(l.fx,fy,l.tx,ty)
 			end
 		end
 	end
