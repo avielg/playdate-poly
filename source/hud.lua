@@ -30,7 +30,7 @@ function Hud:bellyText()
 	if self.belly == kMaxFoodInBelly then 
 		return "NEED TO POOP!"
 	else
-		return repeatString("O", self.belly) .. repeatString("-", kMaxFoodInBelly)
+		return repeatString("O", self.belly) .. repeatString("-", kMaxFoodInBelly - self.belly)
 	end
 end
 
