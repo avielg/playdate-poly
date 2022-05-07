@@ -17,7 +17,7 @@ kScorpionEnabled = true
 kNumOfLinesWhenScorpionAppears = 60
 
 -- When the scorpion distance to player is this many lines - we lost
-kLinesWhenScorpionHitPlayer = 15
+kLinesWhenScorpionHitPlayer = 7
 
 --- Food ---
 ------------
