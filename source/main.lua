@@ -178,9 +178,23 @@ function lineSprite()
 		gfx.setColor(gfx.kColorWhite)
 		gfx.setLineWidth(20)
 		
-		for i=1, #lines do
+		local o = -offsetY
+		local limit = o - 100 -- without the extra 100 it stops drawing too low
+		for i = #lines, 1, -1 do
 			local l = lines[i]
-			gfx.drawLine(l.fx,l.fy,l.tx,l.ty)
+			if l.fy < limit and l.ty < limit then
+				-- stop iterating once we hit lines higher than offset
+				-- not doing this (iterating all the lines) tanks perf
+				break
+			else
+				-- local startInRect = l.fy > o and l.fy < o + height
+				-- local endsInRect = l.ty > o and l.ty < o + height
+				-- if startInRect or endsInRect then
+					local fy = l.fy - o
+					local ty = l.ty - o
+					gfx.drawLine(l.fx,fy,l.tx,ty)
+				-- end
+			end
 		end
 	end
 	s:add()
@@ -233,11 +247,7 @@ function playdate.cranked(change, acceleratedChange)
 end
 
 function addLine(line)
-	local y = linesSprite.height
-	local lineEnd = math.max(line.fy, line.ty)
-	if lineEnd > y then
-		linesSprite:setSize(screenW, lineEnd + 20) -- 20 being line width
-	end
+	linesSprite:moveTo(0, -offsetY)
 end
 
 function isBellyFull()
