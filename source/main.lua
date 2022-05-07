@@ -408,18 +408,30 @@ function playdate.update()
 	end
 end
 
-function playdate.upButtonDown()	moving = 1	end
-function playdate.upButtonUp()		moving = 0	end
+function playdate.upButtonDown()
+	if hud.debugMode or player.y == kAboveGroundPlayerPositionY then
+		moving = 1
+	end
+end
+function playdate.upButtonUp()
+	if hud.debugMode or player.y == kAboveGroundPlayerPositionY then
+		moving = 0
+	end
+end
 function playdate.leftButtonDown()
-	if state == kStateGoing then
-		local currentRotation = player:getRotation()
-		player:setRotation(currentRotation - 20)
+	if hud.debugMode then
+		if state == kStateGoing then
+			local currentRotation = player:getRotation()
+			player:setRotation(currentRotation - 20)
+		end
 	end
 end
 function playdate.rightButtonDown()
-	if state == kStateGoing then
-		local currentRotation = player:getRotation()
-		player:setRotation(currentRotation + 20)
+	if hud.debugMode then
+		if state == kStateGoing then
+			local currentRotation = player:getRotation()
+			player:setRotation(currentRotation + 20)
+		end
 	end
 end
 function playdate.AButtonUp()
