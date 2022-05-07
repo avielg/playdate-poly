@@ -7,6 +7,9 @@ kAboveGroundSpace = 60
 -- The Y position at which the player appears walking "on ground"
 kAboveGroundPlayerPositionY = 51
 
+-- The X position the player begins
+kPlayerStartX = 100
+
 --- Scorpion ---
 ----------------
 

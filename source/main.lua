@@ -157,7 +157,7 @@ function resetGame()
 
 	gfx.setDrawOffset(0,0)
 	
-	player:moveTo(200,kAboveGroundPlayerPositionY)
+	player:moveTo(kPlayerStartX,kAboveGroundPlayerPositionY)
 	player:setRotation(0)
 	
 	scorpion:reset()	
@@ -196,7 +196,7 @@ function gameSetup()
 	
 	player = gfx.sprite.new(playerImg)
 	player:setZIndex(zIndexPlayer)
-	player:moveTo(200,kAboveGroundPlayerPositionY)
+	player:moveTo(kPlayerStartX,kAboveGroundPlayerPositionY)
 	player:setCollideRect(0, 0, player:getSize())
 	player:add()
 	
